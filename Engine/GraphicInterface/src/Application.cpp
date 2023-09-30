@@ -9,7 +9,7 @@ namespace GraphicInterface
 
 	Application::~Application()
 	{
-
+		delete _pRenderer;
 	}
 
 	void Application::Run()
