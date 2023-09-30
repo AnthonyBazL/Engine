@@ -4,7 +4,8 @@ namespace GraphicInterface
 {
 	Application::Application()
 	{
-		_pRenderer = new OpenGLRenderer();
+		_pScene = new Scene();
+		_pRenderer = new OpenGLRenderer(_pScene);
 	}
 
 	Application::~Application()

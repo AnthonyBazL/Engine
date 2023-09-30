@@ -4,6 +4,8 @@
 #include "OpenGLRenderer.h"
 #endif
 
+#include "Scene.h"
+
 namespace GraphicInterface
 {
 	class Application
@@ -15,6 +17,7 @@ namespace GraphicInterface
 
 	private:
 		Renderer* _pRenderer;
+		Scene* _pScene;
 	};
 }
 

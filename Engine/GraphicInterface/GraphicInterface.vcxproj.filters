@@ -24,34 +24,58 @@
     <ClInclude Include="src\Application.h">
       <Filter>Fichiers d%27en-tête</Filter>
     </ClInclude>
-    <ClInclude Include="src\ImGui\imconfig.h">
+    <ClInclude Include="src\ImGui\External\imconfig.h">
       <Filter>Fichiers d%27en-tête</Filter>
     </ClInclude>
-    <ClInclude Include="src\ImGui\imgui.h">
+    <ClInclude Include="src\ImGui\External\imgui.h">
       <Filter>Fichiers d%27en-tête</Filter>
     </ClInclude>
-    <ClInclude Include="src\ImGui\imgui_impl_glfw.h">
+    <ClInclude Include="src\ImGui\External\imgui_impl_glfw.h">
       <Filter>Fichiers d%27en-tête</Filter>
     </ClInclude>
-    <ClInclude Include="src\ImGui\imgui_impl_opengl3.h">
+    <ClInclude Include="src\ImGui\External\imgui_impl_opengl3.h">
       <Filter>Fichiers d%27en-tête</Filter>
     </ClInclude>
-    <ClInclude Include="src\ImGui\imgui_impl_opengl3_loader.h">
+    <ClInclude Include="src\ImGui\External\imgui_impl_opengl3_loader.h">
       <Filter>Fichiers d%27en-tête</Filter>
     </ClInclude>
-    <ClInclude Include="src\ImGui\imgui_internal.h">
+    <ClInclude Include="src\ImGui\External\imgui_internal.h">
       <Filter>Fichiers d%27en-tête</Filter>
     </ClInclude>
-    <ClInclude Include="src\ImGui\imstb_rectpack.h">
+    <ClInclude Include="src\ImGui\External\imstb_rectpack.h">
       <Filter>Fichiers d%27en-tête</Filter>
     </ClInclude>
-    <ClInclude Include="src\ImGui\imstb_textedit.h">
+    <ClInclude Include="src\ImGui\External\imstb_textedit.h">
       <Filter>Fichiers d%27en-tête</Filter>
     </ClInclude>
-    <ClInclude Include="src\ImGui\imstb_truetype.h">
+    <ClInclude Include="src\ImGui\External\imstb_truetype.h">
       <Filter>Fichiers d%27en-tête</Filter>
     </ClInclude>
-    <ClInclude Include="src\ImGuiManager.h">
+    <ClInclude Include="src\ImGui\ImGuiManager.h">
+      <Filter>Fichiers d%27en-tête</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ImGui\Windows\ImGuiWindow.h">
+      <Filter>Fichiers d%27en-tête</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ImGui\Windows\ProfilerGUI.h">
+      <Filter>Fichiers d%27en-tête</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ImGui\Windows\SceneTransformGUI.h">
+      <Filter>Fichiers d%27en-tête</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ImGui\Windows\ObjectPropertiesGUI.h">
+      <Filter>Fichiers d%27en-tête</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Meshes\Mesh.h">
+      <Filter>Fichiers d%27en-tête</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Meshes\Primitives\Triangle.h">
+      <Filter>Fichiers d%27en-tête</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Scene.h">
+      <Filter>Fichiers d%27en-tête</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Shaders\ShaderLoader.h">
       <Filter>Fichiers d%27en-tête</Filter>
     </ClInclude>
   </ItemGroup>
@@ -68,29 +92,58 @@
     <ClCompile Include="src\Main.cpp">
       <Filter>Fichiers sources</Filter>
     </ClCompile>
-    <ClCompile Include="src\ImGui\imgui.cpp">
+    <ClCompile Include="src\ImGui\External\imgui.cpp">
       <Filter>Fichiers sources</Filter>
     </ClCompile>
-    <ClCompile Include="src\ImGui\imgui_demo.cpp">
+    <ClCompile Include="src\ImGui\External\imgui_demo.cpp">
       <Filter>Fichiers sources</Filter>
     </ClCompile>
-    <ClCompile Include="src\ImGui\imgui_draw.cpp">
+    <ClCompile Include="src\ImGui\External\imgui_draw.cpp">
       <Filter>Fichiers sources</Filter>
     </ClCompile>
-    <ClCompile Include="src\ImGui\imgui_impl_glfw.cpp">
+    <ClCompile Include="src\ImGui\External\imgui_impl_glfw.cpp">
       <Filter>Fichiers sources</Filter>
     </ClCompile>
-    <ClCompile Include="src\ImGui\imgui_impl_opengl3.cpp">
+    <ClCompile Include="src\ImGui\External\imgui_impl_opengl3.cpp">
       <Filter>Fichiers sources</Filter>
     </ClCompile>
-    <ClCompile Include="src\ImGui\imgui_tables.cpp">
+    <ClCompile Include="src\ImGui\External\imgui_tables.cpp">
       <Filter>Fichiers sources</Filter>
     </ClCompile>
-    <ClCompile Include="src\ImGui\imgui_widgets.cpp">
+    <ClCompile Include="src\ImGui\External\imgui_widgets.cpp">
       <Filter>Fichiers sources</Filter>
     </ClCompile>
-    <ClCompile Include="src\ImGuiManager.cpp">
+    <ClCompile Include="src\ImGui\ImGuiManager.cpp">
       <Filter>Fichiers sources</Filter>
     </ClCompile>
+    <ClCompile Include="src\ImGui\Windows\ImGuiWindow.cpp">
+      <Filter>Fichiers sources</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ImGui\Windows\ProfilerGUI.cpp">
+      <Filter>Fichiers sources</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ImGui\Windows\SceneTransformGUI.cpp">
+      <Filter>Fichiers sources</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ImGui\Windows\ObjectPropertiesGUI.cpp">
+      <Filter>Fichiers sources</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Meshes\Mesh.cpp">
+      <Filter>Fichiers sources</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Meshes\Primitives\Triangle.cpp">
+      <Filter>Fichiers sources</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Scene.cpp">
+      <Filter>Fichiers sources</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Shaders\ShaderLoader.cpp">
+      <Filter>Fichiers sources</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="src\ImGui\External\imgui.ini" />
+    <None Include="src\Shaders\SimpleFragmentShader.frag" />
+    <None Include="src\Shaders\SimpleVertexShader.vert" />
   </ItemGroup>
 </Project>
