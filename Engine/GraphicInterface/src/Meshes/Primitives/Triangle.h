@@ -8,20 +8,24 @@
 #include "../../Shaders/ShaderLoader.h"
 #endif // !SHADER_LOADER_H
 
+#ifndef GLM_H
+#include <GLM/gtc/matrix_transform.hpp>
+#endif
+
 
 
 class Triangle : public Mesh
 {
 public:
-	Triangle();
+	Triangle(Camera* pCamera);
 	~Triangle();
 
 private:
 	void Initialize() override;
 	void Render() override;
 
-	GLuint _vertexBuffer;
-	GLuint _colorBuffer;
-	GLuint _programID;
+	GLuint _vertexBuffer = -1;
+	GLuint _colorBuffer = -1;
+	GLuint _programID = -1;
 };
 

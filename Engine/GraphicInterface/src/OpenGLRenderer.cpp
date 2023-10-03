@@ -71,72 +71,10 @@ namespace GraphicInterface
         // Ensure we can capture the escape key being pressed below
         glfwSetInputMode(_pWnd, GLFW_STICKY_KEYS, GL_TRUE);
 
-        _pGUIManager = new ImGuiManager(_pWnd);
-
-
-        //// Load Shaders
-        //GLuint programID = LoadShaders("src/Shaders/SimpleVertexShader.vert", "src/Shaders/SimpleFragmentShader.frag");
-
-
-        //// VAO
-        //GLuint VertexArrayID;
-        //glGenVertexArrays(1, &VertexArrayID);
-        //glBindVertexArray(VertexArrayID);
-
-
-        //// This will identify our vertex buffer
-        //GLuint vertexbuffer;
-        //// Generate 1 buffer, put the resulting identifier in vertexbuffer
-        //glGenBuffers(1, &vertexbuffer);
-        //// The following commands will talk about our 'vertexbuffer' buffer
-        //glBindBuffer(GL_ARRAY_BUFFER, vertexbuffer);
-        //// Give our vertices to OpenGL.
-        //glBufferData(GL_ARRAY_BUFFER, sizeof(g_vertex_position_buffer_data), g_vertex_position_buffer_data, GL_STATIC_DRAW);
-
-
-        //// This will identify our vertex buffer
-        //GLuint colorBuffer;
-        //// Generate 1 buffer, put the resulting identifier in vertexbuffer
-        //glGenBuffers(1, &colorBuffer);
-        //// The following commands will talk about our 'vertexbuffer' buffer
-        //glBindBuffer(GL_ARRAY_BUFFER, colorBuffer);
-        //// Give our vertices to OpenGL.
-        //glBufferData(GL_ARRAY_BUFFER, sizeof(g_vertex_color_buffer_data), g_vertex_color_buffer_data, GL_STATIC_DRAW);
-
+        _pGUIManager = new ImGuiManager(_pWnd, _pScene);
 
         do {
             glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
-            //// Use our shader
-            //glUseProgram(programID);
-
-            //// 1st attribute buffer : vertices
-            //glEnableVertexAttribArray(0);
-            //glBindBuffer(GL_ARRAY_BUFFER, vertexbuffer);
-            //glVertexAttribPointer(
-            //    0,                  // attribute 0. No particular reason for 0, but must match the layout in the shader.
-            //    3,                  // size
-            //    GL_FLOAT,           // type
-            //    GL_FALSE,           // normalized?
-            //    0,                  // stride
-            //    (void*)0            // array buffer offset
-            //);
-
-            //// 2nd attribute buffer : vertices
-            //glEnableVertexAttribArray(1);
-            //glBindBuffer(GL_ARRAY_BUFFER, colorBuffer);
-            //glVertexAttribPointer(
-            //    1,                  // attribute 0. No particular reason for 0, but must match the layout in the shader.
-            //    3,                  // size
-            //    GL_FLOAT,           // type
-            //    GL_FALSE,           // normalized?
-            //    0,                  // stride
-            //    (void*)0            // array buffer offset
-            //);
-            //// Draw the triangle !
-            //glDrawArrays(GL_TRIANGLES, 0, 3); // Starting from vertex 0; 3 vertices total -> 1 triangle
-            //glDisableVertexAttribArray(0);
-            //glDisableVertexAttribArray(1);
 
             for (const auto& mesh : _pScene->GetMeshes())
             {

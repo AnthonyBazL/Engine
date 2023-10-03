@@ -2,7 +2,7 @@
 
 namespace GUI
 {
-	ImGuiManager::ImGuiManager(GLFWwindow* pWindow)
+	ImGuiManager::ImGuiManager(GLFWwindow* pWindow, Scene* pScene)
 	{
 		IMGUI_CHECKVERSION();
 		ImGui::CreateContext();
@@ -15,7 +15,7 @@ namespace GUI
 		ImGui_ImplOpenGL3_Init("#version 330");
 
 		_windowsMap[ImGuiWindowType::PROFILER] = new ProfilerGUI();
-		_windowsMap[ImGuiWindowType::SCENE_TRANSFORM] = new SceneTransformGUI();
+		_windowsMap[ImGuiWindowType::SCENE_TRANSFORM] = new SceneTransformGUI(pScene);
 		_windowsMap[ImGuiWindowType::OBJECT_PROPERTIES] = new ObjectPropertiesGUI();
 	}
 

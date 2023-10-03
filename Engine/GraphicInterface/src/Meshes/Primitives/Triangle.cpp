@@ -14,7 +14,7 @@ static const GLfloat g_vertex_color_buffer_data[] = {
    0.0f,  0.0f, 1.0f,
 };
 
-Triangle::Triangle()
+Triangle::Triangle(Camera* pCamera) : Mesh(pCamera)
 {
 }
 
@@ -29,6 +29,22 @@ void Triangle::Render()
 
     // Use our shader
     glUseProgram(_programID);
+
+
+
+    // Or, for an ortho camera :
+    //glm::mat4 Projection = glm::ortho(-10.0f,10.0f,-10.0f,10.0f,0.0f,100.0f); // In world coordinates
+
+    // Our ModelViewProjection : multiplication of our 3 matrices
+    glm::mat4 mvp = _pCamera->GetProjectionMatrix() * _pCamera->GetViewMatrix() * _modelMatrix; // Remember, matrix multiplication is the other way around
+
+    // Get a handle for our "MVP" uniform
+    // Only during the initialisation
+    GLuint MatrixID = glGetUniformLocation(_programID, "MVP");
+
+    // Send our transformation to the currently bound shader, in the "MVP" uniform
+    // This is done in the main loop since each model will have a different MVP matrix (At least for the M part)
+    glUniformMatrix4fv(MatrixID, 1, GL_FALSE, &mvp[0][0]);
 
     // 1st attribute buffer : vertices
     glEnableVertexAttribArray(0);

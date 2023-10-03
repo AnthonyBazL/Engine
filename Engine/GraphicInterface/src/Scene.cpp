@@ -2,7 +2,8 @@
 
 Scene::Scene()
 {
-	_meshes.push_back(new Triangle());
+	_pCamera = new Camera();
+	_meshes.push_back(new Triangle(_pCamera));
 }
 
 Scene::~Scene()
