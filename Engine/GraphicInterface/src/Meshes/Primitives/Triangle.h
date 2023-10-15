@@ -17,7 +17,7 @@
 class Triangle : public Mesh
 {
 public:
-	Triangle(Camera* pCamera);
+	Triangle(Camera* pCamera, glm::vec3 position);
 	~Triangle();
 
 private:

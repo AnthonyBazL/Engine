@@ -88,6 +88,14 @@ namespace GraphicInterface
             glfwSwapBuffers(_pWnd);
             glfwPollEvents();
 
+            // TODO: Remove, only debugging purpose
+            double oldMousePosX = _mousePosX;
+            double oldMousePosY = _mousePosY;
+            glfwGetCursorPos(_pWnd, &_mousePosX, &_mousePosY);
+
+            if (oldMousePosX != _mousePosX || oldMousePosY != _mousePosY)
+                std::cout << "Mouse Position (" << _mousePosX << ", " << _mousePosY << ")" << std::endl;
+
         } // Check if the ESC key was pressed or the window was closed
         while (glfwGetKey(_pWnd, GLFW_KEY_ESCAPE) != GLFW_PRESS &&
             glfwWindowShouldClose(_pWnd) == 0);

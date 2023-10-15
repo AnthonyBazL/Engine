@@ -17,6 +17,9 @@ namespace GUI
 		_windowsMap[ImGuiWindowType::PROFILER] = new ProfilerGUI();
 		_windowsMap[ImGuiWindowType::SCENE_TRANSFORM] = new SceneTransformGUI(pScene);
 		_windowsMap[ImGuiWindowType::OBJECT_PROPERTIES] = new ObjectPropertiesGUI();
+
+		// TODO: to remove, just here for testing
+		((ObjectPropertiesGUI*)_windowsMap[ImGuiWindowType::OBJECT_PROPERTIES])->SetObject(pScene->GetMeshes()[0]);
 	}
 
 	ImGuiManager::~ImGuiManager()

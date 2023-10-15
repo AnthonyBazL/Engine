@@ -17,6 +17,8 @@ namespace GraphicInterface
 	private:
 		ImGuiManager* _pGUIManager = nullptr;
 		GLFWwindow* _pWnd = nullptr;
+		double _mousePosX = 0.0;
+		double _mousePosY = 0.0;
 
 		int CreateWindow();
 		int Render();
