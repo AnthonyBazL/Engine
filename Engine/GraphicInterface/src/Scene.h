@@ -2,6 +2,7 @@
 
 #include <vector>
 #include "Meshes/Primitives/Triangle.h"
+#include "Meshes/CustomMesh.h"
 
 #ifndef CAMERA_H
 #include "Camera.h"

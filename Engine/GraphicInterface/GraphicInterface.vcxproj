@@ -90,11 +90,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Engine\Engine.vcxproj">
-      <Project>{8323b437-d4fa-4405-814c-f34973b73a8b}</Project>
-    </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
+    <ClInclude Include="src\Meshes\CustomMesh.h" />
     <ClInclude Include="src\Camera.h" />
     <ClInclude Include="src\Shaders\ShaderLoader.h" />
     <ClInclude Include="src\Scene.h" />
@@ -119,6 +115,7 @@
     <ClInclude Include="src\Meshes\Primitives\Triangle.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="src\Meshes\CustomMesh.cpp" />
     <ClCompile Include="src\Camera.cpp" />
     <ClCompile Include="src\Shaders\ShaderLoader.cpp" />
     <ClCompile Include="src\Scene.cpp" />
@@ -143,8 +140,15 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="src\ImGui\External\imgui.ini" />
+    <None Include="src\Shaders\CustomFragmentShader.frag" />
+    <None Include="src\Shaders\CustomVertexShader.vert" />
     <None Include="src\Shaders\SimpleFragmentShader.frag" />
     <None Include="src\Shaders\SimpleVertexShader.vert" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Engine\Engine.vcxproj">
+      <Project>{ff359438-673b-4906-9132-8a76f58669af}</Project>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

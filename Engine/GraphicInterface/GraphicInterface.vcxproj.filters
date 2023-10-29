@@ -81,6 +81,9 @@
     <ClInclude Include="src\Camera.h">
       <Filter>Fichiers d%27en-tête</Filter>
     </ClInclude>
+    <ClInclude Include="src\Meshes\CustomMesh.h">
+      <Filter>Fichiers d%27en-tête</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Renderer.cpp">
@@ -146,10 +149,15 @@
     <ClCompile Include="src\Camera.cpp">
       <Filter>Fichiers sources</Filter>
     </ClCompile>
+    <ClCompile Include="src\Meshes\CustomMesh.cpp">
+      <Filter>Fichiers sources</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="src\ImGui\External\imgui.ini" />
     <None Include="src\Shaders\SimpleFragmentShader.frag" />
     <None Include="src\Shaders\SimpleVertexShader.vert" />
+    <None Include="src\Shaders\CustomFragmentShader.frag" />
+    <None Include="src\Shaders\CustomVertexShader.vert" />
   </ItemGroup>
 </Project>

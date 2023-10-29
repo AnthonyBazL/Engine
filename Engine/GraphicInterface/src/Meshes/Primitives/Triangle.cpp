@@ -30,8 +30,6 @@ void Triangle::Render()
     // Use our shader
     glUseProgram(_programID);
 
-
-
     // Or, for an ortho camera :
     //glm::mat4 Projection = glm::ortho(-10.0f,10.0f,-10.0f,10.0f,0.0f,100.0f); // In world coordinates
 
@@ -62,7 +60,7 @@ void Triangle::Render()
     glEnableVertexAttribArray(1);
     glBindBuffer(GL_ARRAY_BUFFER, _colorBuffer);
     glVertexAttribPointer(
-        1,                  // attribute 0. No particular reason for 0, but must match the layout in the shader.
+        1,                  // attribute 1. No particular reason for 0, but must match the layout in the shader.
         3,                  // size
         GL_FLOAT,           // type
         GL_FALSE,           // normalized?
