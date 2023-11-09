@@ -11,7 +11,7 @@ CustomMesh::~CustomMesh()
 
 void CustomMesh::Initialize()
 {
-    _pObjFileData = (Engine::ObjFileData*)Engine::LoadFile("C:\\Users\\abaze\\Documents\\C++ Projects\\Engine\\Engine\\GraphicInterface\\resources\\obj\\Room.obj");
+    _pObjFileData = (Engine::ObjFileData*)Engine::LoadFile("C:\\Users\\abaze\\Documents\\C++ Projects\\Engine\\Engine\\GraphicInterface\\resources\\obj\\TheCube.obj");
 
     // Load Shaders
     _programID = ShaderLoader::LoadShaders("src/Shaders/CustomVertexShader.vert", "src/Shaders/CustomFragmentShader.frag");
@@ -27,7 +27,7 @@ void CustomMesh::Initialize()
     // The following commands will talk about our 'vertexbuffer' buffer
     glBindBuffer(GL_ARRAY_BUFFER, _vertexBuffer);
     // Give our vertices to OpenGL.
-    glBufferData(GL_ARRAY_BUFFER, _pObjFileData->vertex_position.size() * 3 * sizeof(float), _pObjFileData->vertex_position.data(), GL_STATIC_DRAW);
+    glBufferData(GL_ARRAY_BUFFER, _pObjFileData->vertex_position_sorted.size() * sizeof(float), _pObjFileData->vertex_position_sorted.data(), GL_STATIC_DRAW);
 
     _initialized = true;
 }
@@ -66,7 +66,11 @@ void CustomMesh::Render()
         (void*)0            // array buffer offset
     );
 
-    // Draw the triangle !
-    glDrawArrays(GL_TRIANGLES, 0, _pObjFileData->vertex_position.size()); // Starting from vertex 0; 3 vertices total -> 1 triangle
+    // Draw 
+    if(_pObjFileData->face_triangle)
+        glDrawArrays(GL_TRIANGLES, 0, _pObjFileData->vertex_position_sorted.size()); // Starting from vertex 0; 3 vertices total -> 1 triangle
+    else
+        glDrawArrays(GL_QUADS, 0, _pObjFileData->vertex_position_sorted.size()); // Starting from vertex 0; 3 vertices total -> 1 triangle
+
     glDisableVertexAttribArray(0);
 }

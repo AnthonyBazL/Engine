@@ -19,12 +19,21 @@ namespace Engine
 		// TODO: This boolean will disappear as soon as current code will support multiple object from an OBJ file
 		bool firstObjectFound = false;
 		ObjFileData* objData = new ObjFileData();
+		FaceType faceType = TRIANGLE;
+		bool faceTypeDefined = false;
 
 		if (objFile.is_open())
 		{
 			while (objFile)
 			{
 				std::getline(objFile, line);
+				if (objFile.eof())
+				{
+					objFile.close();
+					SortVertices(objData);
+					return objData;
+				}
+
 				Split(line, ' ', lineSplitted);
 
 				std::string vertexInfo = lineSplitted[0];
@@ -46,17 +55,44 @@ namespace Engine
 				}
 				else if (vertexInfo == "f")
 				{
+					if (!faceTypeDefined && lineSplitted.size() == 5)
+					{
+						faceType = QUAD;
+						objData->face_triangle = false;
+					}
+					faceTypeDefined = true;
+
 					std::vector<std::string> faceIdSplitter;
-					Split(lineSplitted[1], '/', faceIdSplitter);
-					Split(lineSplitted[2], '/', faceIdSplitter);
-					Split(lineSplitted[3], '/', faceIdSplitter);
-					Split(lineSplitted[4], '/', faceIdSplitter);
-					std::array<unsigned int, 12> face{
-						std::stoi(faceIdSplitter[0]), std::stoi(faceIdSplitter[1]), std::stoi(faceIdSplitter[2]),
-						std::stoi(faceIdSplitter[3]), std::stoi(faceIdSplitter[4]), std::stoi(faceIdSplitter[5]),
-						std::stoi(faceIdSplitter[6]), std::stoi(faceIdSplitter[7]), std::stoi(faceIdSplitter[8]),
-						std::stoi(faceIdSplitter[9]), std::stoi(faceIdSplitter[10]), std::stoi(faceIdSplitter[11])
-					};
+					std::array<unsigned int, 12> face;
+
+					// TODO: Check for a clean way collect face datas
+					// TODO: Be able to manage triangle and quad faces in the same object
+					if (faceType == QUAD)
+					{
+						Split(lineSplitted[1], '/', faceIdSplitter);
+						Split(lineSplitted[2], '/', faceIdSplitter);
+						Split(lineSplitted[3], '/', faceIdSplitter);
+						Split(lineSplitted[4], '/', faceIdSplitter);
+						
+						face = {
+							std::stoul(faceIdSplitter[0]), faceIdSplitter[1].empty() ? 0 : std::stoul(faceIdSplitter[1]), std::stoul(faceIdSplitter[2]),
+							std::stoul(faceIdSplitter[3]), faceIdSplitter[4].empty() ? 0 : std::stoul(faceIdSplitter[4]), std::stoul(faceIdSplitter[5]),
+							std::stoul(faceIdSplitter[6]), faceIdSplitter[7].empty() ? 0 : std::stoul(faceIdSplitter[7]), std::stoul(faceIdSplitter[8]),
+							std::stoul(faceIdSplitter[9]), faceIdSplitter[10].empty() ? 0 : std::stoul(faceIdSplitter[10]), std::stoul(faceIdSplitter[11])
+						};
+					}
+					else if (faceType == TRIANGLE)
+					{
+						Split(lineSplitted[1], '/', faceIdSplitter);
+						Split(lineSplitted[2], '/', faceIdSplitter);
+						Split(lineSplitted[3], '/', faceIdSplitter);
+						face = {
+							std::stoul(faceIdSplitter[0]), std::stoul(faceIdSplitter[1]), std::stoul(faceIdSplitter[2]),
+							std::stoul(faceIdSplitter[3]), std::stoul(faceIdSplitter[4]), std::stoul(faceIdSplitter[5]),
+							std::stoul(faceIdSplitter[6]), std::stoul(faceIdSplitter[7]), std::stoul(faceIdSplitter[8])
+						};
+					}
+
 					objData->face.push_back(face);
 				}
 				else if (vertexInfo == "o")
@@ -68,9 +104,6 @@ namespace Engine
 
 				lineSplitted.clear();
 			}
-
-			objFile.close();
-			return objData;
 		}
 		else
 		{
@@ -88,6 +121,26 @@ namespace Engine
 		std::string s;
 		while (std::getline(ss, s, delim)) {
 			out.push_back(s);
+		}
+	}
+
+	void ObjLoader::SortVertices(ObjFileData* objFileData)
+	{
+		for (std::array<unsigned int, 12> faceInfos : objFileData->face)
+		{
+			int* vertexIndexOfFace;
+			if(objFileData->face_triangle)
+				vertexIndexOfFace = new int[]{ (int)faceInfos[0], (int)faceInfos[3], (int)faceInfos[6]};
+			else
+				vertexIndexOfFace = new int[]{ (int)faceInfos[0], (int)faceInfos[3], (int)faceInfos[6], (int)faceInfos[9]};
+
+			for (int i = 0; i < (objFileData->face_triangle ? 3 : 4); ++i)
+			{
+				std::array<float, 3> vertexPos = objFileData->vertex_position[vertexIndexOfFace[i] - 1];
+				objFileData->vertex_position_sorted.push_back(vertexPos[0]);
+				objFileData->vertex_position_sorted.push_back(vertexPos[1]);
+				objFileData->vertex_position_sorted.push_back(vertexPos[2]);
+			}
 		}
 	}
 }

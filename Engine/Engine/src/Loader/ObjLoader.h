@@ -5,6 +5,7 @@
 #include <vector>
 #include <sstream>
 #include <array>
+#include <algorithm>
 
 namespace Engine
 {
@@ -22,12 +23,17 @@ namespace Engine
 		std::vector<std::array<float, 2>> vertex_normal;	// vn 0.0 1.0 0.0
 		std::vector<std::array<float, 2>> vertex_texture;	// vt 1.0 0.0
 		std::vector<std::array<unsigned int, 12>> face;		// f v1/vt1/vn1 v2/vt2/vn2 v3/vt3/vn3 (index start at 1, not 0)
+		std::vector<float> vertex_position_sorted; // Sort vertices to use them with rendering API (OpenGL)
+		bool face_triangle = true;
 	};
 
 	class ObjLoader
 	{
 	private:
+		enum FaceType { TRIANGLE = 0, QUAD = 1 };
+
 		void Split(std::string const& str, const char delim, std::vector<std::string>& out);
+		void SortVertices(ObjFileData* objFileData);
 	public:
 		ObjFileData* LoadFile(std::string filePath);
 	};

@@ -8,7 +8,7 @@ Camera::Camera()
     _fov = glm::radians(45.0f);
     _aspectRatio = 1280.0f / 720.0f;
     _near = 0.1f;
-    _far = 100.0f;
+    _far = 10000.0f;
     //_projectionMatrix = glm::ortho(-10.0f, 10.0f, -10.0f, 10.0f, 0.0f, 100.0f);
     _projectionMatrix = glm::perspective(_fov, _aspectRatio, _near, _far);
     
