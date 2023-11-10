@@ -84,10 +84,14 @@
   <ItemGroup>
     <ClCompile Include="src\Loader\ObjLoader.cpp" />
     <ClCompile Include="src\Interface.cpp" />
+    <ClCompile Include="src\Loader\stb_image.cpp" />
+    <ClCompile Include="src\Loader\TextureLoader.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\Loader\ObjLoader.h" />
     <ClInclude Include="src\Interface.h" />
+    <ClInclude Include="src\Loader\stb_image.h" />
+    <ClInclude Include="src\Loader\TextureLoader.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

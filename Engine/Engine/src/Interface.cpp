@@ -7,10 +7,16 @@ namespace Engine {
 		printf("Welcome to the Engine!\n");
 	}
 
-	void* LoadFile(std::string filePath)
+	void* LoadObjFile(std::string filePath)
 	{
 		ObjLoader* objLoader = new ObjLoader();
-		ObjFileData* data = objLoader->LoadFile(filePath);
+		return objLoader->LoadFile(filePath);;
+	}
+
+	unsigned char* LoadTextureFile(std::string filePath)
+	{
+		TextureLoader* texLoader = new TextureLoader();
+		unsigned char* data = texLoader->LoadFile(filePath);
 		return data;
 	}
 }

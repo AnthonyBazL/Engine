@@ -19,11 +19,13 @@ namespace Engine
 	ENGINE_DLL_STATE struct ObjFileData
 	{
 	public:
-		std::vector<std::array<float, 3>> vertex_position;	// v 1.0 0.0 0.0 
-		std::vector<std::array<float, 2>> vertex_normal;	// vn 0.0 1.0 0.0
-		std::vector<std::array<float, 2>> vertex_texture;	// vt 1.0 0.0
+		std::vector<std::array<float, 3>> positions;	// v 1.0 0.0 0.0 
+		std::vector<std::array<float, 3>> normals;	// vn 0.0 1.0 0.0
+		std::vector<std::array<float, 2>> uvs;	// vt 1.0 0.0
 		std::vector<std::array<unsigned int, 12>> face;		// f v1/vt1/vn1 v2/vt2/vn2 v3/vt3/vn3 (index start at 1, not 0)
-		std::vector<float> vertex_position_sorted; // Sort vertices to use them with rendering API (OpenGL)
+		std::vector<float> positions_sorted; // Sort positions to use them with rendering API (OpenGL)
+		std::vector<float> uvs_sorted; // Sort uvs to use them with rendering API (OpenGL)
+		std::vector<float> normals_sorted; // Sort uvs to use them with rendering API (OpenGL)
 		bool face_triangle = true;
 	};
 

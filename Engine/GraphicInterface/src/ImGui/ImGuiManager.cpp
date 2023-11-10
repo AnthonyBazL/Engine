@@ -19,7 +19,7 @@ namespace GUI
 		_windowsMap[ImGuiWindowType::OBJECT_PROPERTIES] = new ObjectPropertiesGUI();
 
 		// TODO: to remove, just here for testing
-		((ObjectPropertiesGUI*)_windowsMap[ImGuiWindowType::OBJECT_PROPERTIES])->SetObject(pScene->GetMeshes()[0]);
+		((ObjectPropertiesGUI*)_windowsMap[ImGuiWindowType::OBJECT_PROPERTIES])->SetObject(pScene->GetMeshes()[2]);
 	}
 
 	ImGuiManager::~ImGuiManager()

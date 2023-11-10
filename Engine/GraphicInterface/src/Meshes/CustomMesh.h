@@ -11,7 +11,8 @@
 
 namespace Engine {
 	__declspec(dllimport) class ObjFileData;
-	__declspec(dllimport) void* LoadFile(std::string filePath);
+	__declspec(dllimport) void* LoadObjFile(std::string filePath);
+	__declspec(dllimport) unsigned char* LoadTextureFile(std::string filePath);
 }
 
 class CustomMesh : public Mesh
@@ -24,9 +25,10 @@ private:
 	void Initialize() override;
 	void Render() override;
 
-	GLuint _vertexBuffer = -1;
-	GLuint _colorBuffer = -1;
+	GLuint _vertexPositionBuffer = -1;
+	GLuint _vertexUVBuffer = -1;
 	GLuint _programID = -1;
 	Engine::ObjFileData* _pObjFileData;
+	unsigned int _textureID;
 };
 
