@@ -4,10 +4,24 @@
 
 namespace Engine
 {
+
+#if ENGINE_DLL_BUILD
+#define ENGINE_DLL_STATE __declspec(dllexport)
+#else
+#define ENGINE_DLL_STATE __declspec(dllimport)
+#endif
+
+	ENGINE_DLL_STATE struct TextureData
+	{
+	public:
+		unsigned char* data = nullptr;
+		int width = 0, height = 0;
+	};
+
 	class TextureLoader
 	{
 	public:
-		unsigned char* LoadFile(std::string filePath);
+		TextureData* LoadFile(std::string filePath);
 	};
 }
 

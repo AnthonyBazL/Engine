@@ -10,5 +10,6 @@ void main()
     // Flip vertical as OpenGL don't load texture the same way as texture loader store data in memory
     // OpenGL: left to right, bottom to top
     // Texture Loader: left to right, top to bottom
+    //color = vec3(1.0, 1.0, 1.0);
     color = texture(ourTexture, vec2(out_uv.x, out_uv.y * -1.0)).rgb;
 }

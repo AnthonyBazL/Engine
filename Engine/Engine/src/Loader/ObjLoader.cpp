@@ -21,6 +21,7 @@ namespace Engine
 		ObjFileData* objData = new ObjFileData();
 		FaceType faceType = TRIANGLE;
 		bool faceTypeDefined = false;
+		int objIndex = -1;
 
 		if (objFile.is_open())
 		{
@@ -41,17 +42,17 @@ namespace Engine
 				if (vertexInfo == "v")
 				{
 					std::array<float, 3> position{ {std::stof(lineSplitted[1]), std::stof(lineSplitted[2]), std::stof(lineSplitted[3])} };
-					objData->positions.push_back(position);
+					objData->objects[objIndex]->positions.push_back(position);
 				}
 				else if (vertexInfo == "vn")
 				{
 					std::array<float, 3> normal{ std::stof(lineSplitted[1]), std::stof(lineSplitted[2]), std::stof(lineSplitted[3]) };
-					objData->normals.push_back(normal);
+					objData->objects[objIndex]->normals.push_back(normal);
 				}
 				else if (vertexInfo == "vt")
 				{
 					std::array<float, 2> texture{ std::stof(lineSplitted[1]), std::stof(lineSplitted[2]) };
-					objData->uvs.push_back(texture);
+					objData->objects[objIndex]->uvs.push_back(texture);
 				}
 				else if (vertexInfo == "f")
 				{
@@ -69,6 +70,7 @@ namespace Engine
 					// TODO: Be able to manage triangle and quad faces in the same object
 					if (faceType == QUAD)
 					{
+						// TODO: In quad face case, be able to triangulate. Need to be careful on UVs and normals also.
 						Split(lineSplitted[1], '/', faceIdSplitter);
 						Split(lineSplitted[2], '/', faceIdSplitter);
 						Split(lineSplitted[3], '/', faceIdSplitter);
@@ -93,13 +95,12 @@ namespace Engine
 						};
 					}
 
-					objData->face.push_back(face);
+					objData->objects[objIndex]->face.push_back(face);
 				}
 				else if (vertexInfo == "o")
 				{
-					if (firstObjectFound)
-						break;
-					firstObjectFound = true;
+					objData->objects.push_back(new ObjectInformations());
+					++objIndex;
 				}
 
 				lineSplitted.clear();
@@ -126,38 +127,49 @@ namespace Engine
 
 	void ObjLoader::SortVertices(ObjFileData* objFileData)
 	{
-		for (std::array<unsigned int, 12> faceInfos : objFileData->face)
+		int offsetPositionIndex = 0;
+		int offsetUVIndex = 0;
+		int offsetNormalIndex = 0;
+
+		for (int objectIndex = 0; objectIndex < objFileData->objects.size(); ++objectIndex)
 		{
-			int* vertexPositionsOfFace;
-			int* vertexUVsOfFace;
-			int* vertexNormalsOfFace;
-			if (objFileData->face_triangle)
+			for (std::array<unsigned int, 12> faceInfos : objFileData->objects[objectIndex]->face)
 			{
-				vertexPositionsOfFace = new int[]{ (int)faceInfos[0], (int)faceInfos[3], (int)faceInfos[6]};
-				vertexUVsOfFace = new int[]{ (int)faceInfos[1], (int)faceInfos[4], (int)faceInfos[7]};
-				vertexNormalsOfFace = new int[]{ (int)faceInfos[2], (int)faceInfos[5], (int)faceInfos[8]};
-			}
-			else
-			{
-				vertexPositionsOfFace = new int[]{ (int)faceInfos[0], (int)faceInfos[3], (int)faceInfos[6], (int)faceInfos[9]};
-				vertexUVsOfFace = new int[]{ (int)faceInfos[1], (int)faceInfos[4], (int)faceInfos[7], (int)faceInfos[10]};
-				vertexNormalsOfFace = new int[]{ (int)faceInfos[2], (int)faceInfos[5], (int)faceInfos[8], (int)faceInfos[11]};
+				int* vertexPositionsOfFace;
+				int* vertexUVsOfFace;
+				int* vertexNormalsOfFace;
+				if (objFileData->face_triangle)
+				{
+					vertexPositionsOfFace = new int[]{ (int)faceInfos[0], (int)faceInfos[3], (int)faceInfos[6]};
+					vertexUVsOfFace = new int[]{ (int)faceInfos[1], (int)faceInfos[4], (int)faceInfos[7]};
+					vertexNormalsOfFace = new int[]{ (int)faceInfos[2], (int)faceInfos[5], (int)faceInfos[8]};
+				}
+				else
+				{
+					vertexPositionsOfFace = new int[]{ (int)faceInfos[0], (int)faceInfos[3], (int)faceInfos[6], (int)faceInfos[9]};
+					vertexUVsOfFace = new int[]{ (int)faceInfos[1], (int)faceInfos[4], (int)faceInfos[7], (int)faceInfos[10]};
+					vertexNormalsOfFace = new int[]{ (int)faceInfos[2], (int)faceInfos[5], (int)faceInfos[8], (int)faceInfos[11]};
+				}
+
+				for (int i = 0; i < (objFileData->face_triangle ? 3 : 4); ++i)
+				{
+					std::array<float, 3> vertexPos = objFileData->objects[objectIndex]->positions[vertexPositionsOfFace[i] - offsetPositionIndex - 1];
+					std::array<float, 2> vertexUV = objFileData->objects[objectIndex]->uvs[vertexUVsOfFace[i] - offsetUVIndex - 1];
+					std::array<float, 3> vertexNormal = objFileData->objects[objectIndex]->normals[vertexNormalsOfFace[i] - offsetNormalIndex - 1];
+					objFileData->objects[objectIndex]->positions_sorted.push_back(vertexPos[0]);
+					objFileData->objects[objectIndex]->positions_sorted.push_back(vertexPos[1]);
+					objFileData->objects[objectIndex]->positions_sorted.push_back(vertexPos[2]);
+					objFileData->objects[objectIndex]->uvs_sorted.push_back(vertexUV[0]);
+					objFileData->objects[objectIndex]->uvs_sorted.push_back(vertexUV[1]);
+					objFileData->objects[objectIndex]->normals_sorted.push_back(vertexNormal[0]);
+					objFileData->objects[objectIndex]->normals_sorted.push_back(vertexNormal[1]);
+					objFileData->objects[objectIndex]->normals_sorted.push_back(vertexNormal[2]);
+				}
 			}
 
-			for (int i = 0; i < (objFileData->face_triangle ? 3 : 4); ++i)
-			{
-				std::array<float, 3> vertexPos = objFileData->positions[vertexPositionsOfFace[i] - 1];
-				std::array<float, 2> vertexUV = objFileData->uvs[vertexUVsOfFace[i] - 1];
-				std::array<float, 3> vertexNormal = objFileData->normals[vertexNormalsOfFace[i] - 1];
-				objFileData->positions_sorted.push_back(vertexPos[0]);
-				objFileData->positions_sorted.push_back(vertexPos[1]);
-				objFileData->positions_sorted.push_back(vertexPos[2]);
-				objFileData->uvs_sorted.push_back(vertexUV[0]);
-				objFileData->uvs_sorted.push_back(vertexUV[1]);
-				objFileData->normals_sorted.push_back(vertexNormal[0]);
-				objFileData->normals_sorted.push_back(vertexNormal[1]);
-				objFileData->normals_sorted.push_back(vertexNormal[2]);
-			}
+			offsetPositionIndex += objFileData->objects[objectIndex]->positions.size();
+			offsetUVIndex += objFileData->objects[objectIndex]->uvs.size();
+			offsetNormalIndex += objFileData->objects[objectIndex]->normals.size();
 		}
 	}
 }

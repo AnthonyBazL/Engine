@@ -13,10 +13,9 @@ namespace Engine {
 		return objLoader->LoadFile(filePath);;
 	}
 
-	unsigned char* LoadTextureFile(std::string filePath)
+	void* LoadTextureFile(std::string filePath)
 	{
 		TextureLoader* texLoader = new TextureLoader();
-		unsigned char* data = texLoader->LoadFile(filePath);
-		return data;
+		return texLoader->LoadFile(filePath);
 	}
 }

@@ -8,11 +8,15 @@
 #include "../Shaders/ShaderLoader.h"
 #endif // !SHADER_LOADER_H
 
+#include "../../../Engine/src/Loader/ObjLoader.h"
+#include "../../../Engine/src/Loader/TextureLoader.h"
 
 namespace Engine {
 	__declspec(dllimport) class ObjFileData;
+	__declspec(dllimport) class ObjectInformations;
+	__declspec(dllimport) class TextureData;
 	__declspec(dllimport) void* LoadObjFile(std::string filePath);
-	__declspec(dllimport) unsigned char* LoadTextureFile(std::string filePath);
+	__declspec(dllimport) void* LoadTextureFile(std::string filePath);
 }
 
 class CustomMesh : public Mesh
@@ -25,10 +29,10 @@ private:
 	void Initialize() override;
 	void Render() override;
 
-	GLuint _vertexPositionBuffer = -1;
-	GLuint _vertexUVBuffer = -1;
+	GLuint* _vertexPositionBufferID;
+	GLuint* _vertexUVBufferID;
 	GLuint _programID = -1;
 	Engine::ObjFileData* _pObjFileData;
-	unsigned int _textureID;
+	unsigned int* _textureID;
 };
 

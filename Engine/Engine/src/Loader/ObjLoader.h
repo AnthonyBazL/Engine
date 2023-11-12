@@ -15,8 +15,7 @@ namespace Engine
 #define ENGINE_DLL_STATE __declspec(dllimport)
 #endif
 
-	// For now, it will handle only one object from an OBJ file (an OBJ file can handle multiple object)
-	ENGINE_DLL_STATE struct ObjFileData
+	ENGINE_DLL_STATE struct ObjectInformations
 	{
 	public:
 		std::vector<std::array<float, 3>> positions;	// v 1.0 0.0 0.0 
@@ -26,6 +25,12 @@ namespace Engine
 		std::vector<float> positions_sorted; // Sort positions to use them with rendering API (OpenGL)
 		std::vector<float> uvs_sorted; // Sort uvs to use them with rendering API (OpenGL)
 		std::vector<float> normals_sorted; // Sort uvs to use them with rendering API (OpenGL)
+	};
+
+	ENGINE_DLL_STATE struct ObjFileData
+	{
+	public:
+		std::vector<ObjectInformations*> objects;
 		bool face_triangle = true;
 	};
 

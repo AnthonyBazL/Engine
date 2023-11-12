@@ -13,7 +13,7 @@ The goal is to acquire some knowledge on various rendering topics but also on di
   ### OBJ Loader
   - [ ] Deserialize OBJ file
     - [X] Deserialize a single object from an OBJ file
-    - [ ] Deserialize multiple objects from the same OBJ file
+    - [x] Deserialize multiple objects from the same OBJ file
     - [ ] Deserialize OBJ files with faces without UVs coordinates
   - [ ] Manage OBJ file containing both quad and triangulate faces
     - [ ] Identify when an OBJ file contains quad or triangulate faces
@@ -30,9 +30,9 @@ The goal is to acquire some knowledge on various rendering topics but also on di
 ## Rendering
   ### OpenGL rendering
   - [X] Hello world with triangle
-  - [ ] Render a custom mesh
+  - [x] Render a custom mesh
     - [x] A simple object from an OBJ file
-    - [ ] Multiple object from an OBJ file
+    - [x] Multiple object from an OBJ file
   - [x] Apply a simple unlit shader
   - [x] Apply a simple texture 2D shader
   - [ ] Apply a simple lit shader
