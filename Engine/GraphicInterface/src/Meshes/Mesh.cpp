@@ -1,8 +1,9 @@
 #include "Mesh.h"
 
-Mesh::Mesh(Camera* pCamera, glm::vec3 position)
+Mesh::Mesh(Camera* pCamera, Light* pLight, glm::vec3 position)
 {
 	_pCamera = pCamera;
+	_pLight = pLight;
 	Translate(position);
 	_rotation = glm::vec3(0.0f);
 	_scale = glm::vec3(1.0f);

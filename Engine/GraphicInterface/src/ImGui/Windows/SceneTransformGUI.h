@@ -19,8 +19,15 @@ namespace GUI
 		void Render() override;
 
 	private:
-		Scene* _pScene = nullptr;
-		float _cameraPosition[3];
 		Camera* _pCamera = nullptr;
+		Light* _pLight = nullptr;
+		float _cameraPosition[3];
+		float _lightPosition[3];
+		float _diffuseLightIntensity = 1.0f;
+		float _ambiantLightIntensity = 1.0f;
+		float _lightRange = 10.0f;
+		float _camFov = 45.0f;
+		float _camNear = 0.0f;
+		float _camFar = 100.0f;
 	};
 }

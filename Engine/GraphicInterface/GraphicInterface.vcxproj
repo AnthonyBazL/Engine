@@ -90,8 +90,10 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="src\Components\Component.h" />
+    <ClInclude Include="src\Components\Light.h" />
     <ClInclude Include="src\Meshes\CustomMesh.h" />
-    <ClInclude Include="src\Camera.h" />
+    <ClInclude Include="src\Components\Camera.h" />
     <ClInclude Include="src\Shaders\ShaderLoader.h" />
     <ClInclude Include="src\Scene.h" />
     <ClInclude Include="src\Meshes\Mesh.h" />
@@ -115,8 +117,10 @@
     <ClInclude Include="src\Meshes\Primitives\Triangle.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="src\Components\Component.cpp" />
+    <ClCompile Include="src\Components\Light.cpp" />
     <ClCompile Include="src\Meshes\CustomMesh.cpp" />
-    <ClCompile Include="src\Camera.cpp" />
+    <ClCompile Include="src\Components\Camera.cpp" />
     <ClCompile Include="src\Shaders\ShaderLoader.cpp" />
     <ClCompile Include="src\Scene.cpp" />
     <ClCompile Include="src\Meshes\Mesh.cpp" />

@@ -14,7 +14,7 @@ namespace GUI
 
 	void ObjectPropertiesGUI::Render()
 	{
-		if (ImGui::Begin(_name))
+		if (ImGui::Begin(_name, &_opened))
 		{
 			ImGui::Text("World Position: ");
 			ImGui::SameLine();

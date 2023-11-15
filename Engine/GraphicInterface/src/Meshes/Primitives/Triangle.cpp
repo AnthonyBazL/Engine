@@ -14,7 +14,7 @@ static const GLfloat g_vertex_color_buffer_data[] = {
    0.0f,  0.0f, 1.0f,
 };
 
-Triangle::Triangle(Camera* pCamera, glm::vec3 position) : Mesh(pCamera, position)
+Triangle::Triangle(Camera* pCamera, Light* pLight, glm::vec3 position) : Mesh(pCamera, pLight, position)
 {
 }
 

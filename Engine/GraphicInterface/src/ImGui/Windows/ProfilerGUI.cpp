@@ -15,7 +15,7 @@ namespace GUI
 	void ProfilerGUI::Render()
 	{
 		ImGui::SetNextWindowSize(ImVec2(300, 200), ImGuiCond_FirstUseEver);
-		if (ImGui::Begin(_name))
+		if (ImGui::Begin(_name, &_opened))
 		{
 			ImGui::Text("Hello !");
 			ImGui::End();

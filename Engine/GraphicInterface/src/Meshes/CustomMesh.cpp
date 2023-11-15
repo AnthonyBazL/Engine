@@ -1,7 +1,7 @@
 #include "CustomMesh.h"
 
 
-CustomMesh::CustomMesh(Camera* pCamera, glm::vec3 position) : Mesh(pCamera, position)
+CustomMesh::CustomMesh(Camera* pCamera, Light* pLight, glm::vec3 position) : Mesh(pCamera, pLight, position)
 {
 }
 
@@ -33,6 +33,7 @@ void CustomMesh::Initialize()
 
     _vertexPositionBufferID = new GLuint[objectCount];
     _vertexUVBufferID = new GLuint[objectCount];
+    _vertexNormalBufferID = new GLuint[objectCount];
 
     // This will identify our positions buffer
     // Generate 1 buffer per object, put the resulting identifier in _vertexPositionBufferID array
@@ -40,7 +41,11 @@ void CustomMesh::Initialize()
     // This will identify our vertex buffer
     // Generate 1 buffer per object, put the resulting identifier in _vertexUVBufferID array
     glGenBuffers(objectCount, _vertexUVBufferID);
-    glGenTextures(objectCount, _textureID); // Generate as many texture as the object has. I consider one texture per object
+    // This will identify our vertex buffer
+    // Generate 1 buffer per object, put the resulting identifier in _vertexNormalBufferID array
+    glGenBuffers(objectCount, _vertexNormalBufferID);
+    // Generate as many texture as the object has. I consider one texture per object
+    glGenTextures(objectCount, _textureID); 
 
     for (int i = 0; i < objectCount; ++i)
     {
@@ -56,6 +61,12 @@ void CustomMesh::Initialize()
         // Give our buffer to OpenGL.
         glBufferData(GL_ARRAY_BUFFER, _pObjFileData->objects[i]->uvs_sorted.size() * sizeof(float), _pObjFileData->objects[i]->uvs_sorted.data(), GL_STATIC_DRAW);
 
+        // Vertex normals
+        // The following commands will talk about our '_vertexPositionBuffer' buffer
+        glBindBuffer(GL_ARRAY_BUFFER, _vertexNormalBufferID[i]);
+        // Give our buffer to OpenGL.
+        glBufferData(GL_ARRAY_BUFFER, _pObjFileData->objects[i]->normals_sorted.size() * sizeof(float), _pObjFileData->objects[i]->normals_sorted.data(), GL_STATIC_DRAW);
+
         // Texture config
         if (textureData[i])
         {
@@ -65,9 +76,6 @@ void CustomMesh::Initialize()
             glBindTexture(GL_TEXTURE_2D, _textureID[i]); // Select the texture of the first object we want to render
             glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, textureData[i]->width, textureData[i]->height, 0, GL_RGB, GL_UNSIGNED_BYTE, textureData[i]->data);
             glGenerateMipmap(GL_TEXTURE_2D);
-
-            //// Bind texture
-            //glBindTexture(GL_TEXTURE_2D, _textureID[0]);
         }
         else
         {
@@ -104,6 +112,18 @@ void CustomMesh::Render()
     // This is done in the main loop since each model will have a different MVP matrix (At least for the M part)
     glUniformMatrix4fv(MatrixID, 1, GL_FALSE, &mvp[0][0]);
 
+    // Pass light position to shader
+    GLuint lightPositionID = glGetUniformLocation(_programID, "u_lightPosition");
+    glUniform3fv(lightPositionID, 1, glm::value_ptr(_pLight->GetWorldPosition()));
+
+    // Pass diffuse light intensity to shader
+    GLuint diffuseLightIntensityID = glGetUniformLocation(_programID, "u_diffuseLightIntensity");
+    glUniform1f(diffuseLightIntensityID, _pLight->GetDiffuseIntensity());
+
+    // Pass diffuse light intensity to shader
+    GLuint ambiantLightIntensityID = glGetUniformLocation(_programID, "u_ambiantLightIntensity");
+    glUniform1f(ambiantLightIntensityID, _pLight->GetAmbiantIntensity());
+
     int objectCount = _pObjFileData->objects.size();
     for (int i = 0; i < objectCount; ++i)
     {
@@ -125,6 +145,18 @@ void CustomMesh::Render()
         glVertexAttribPointer(
             1,                  // attribute 1. No particular reason for 1, but must match the layout in the shader.
             2,                  // size
+            GL_FLOAT,           // type
+            GL_FALSE,           // normalized?
+            0,                  // stride
+            (void*)0            // array buffer offset
+        );
+
+        // 3rd attribute buffer : vertices normals
+        glEnableVertexAttribArray(2);
+        glBindBuffer(GL_ARRAY_BUFFER, _vertexNormalBufferID[i]);
+        glVertexAttribPointer(
+            2,                  // attribute 1. No particular reason for 1, but must match the layout in the shader.
+            3,                  // size
             GL_FLOAT,           // type
             GL_FALSE,           // normalized?
             0,                  // stride

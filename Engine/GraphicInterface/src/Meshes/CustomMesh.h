@@ -8,6 +8,7 @@
 #include "../Shaders/ShaderLoader.h"
 #endif // !SHADER_LOADER_H
 
+#include <GLM/gtc/type_ptr.hpp>
 #include "../../../Engine/src/Loader/ObjLoader.h"
 #include "../../../Engine/src/Loader/TextureLoader.h"
 
@@ -22,7 +23,7 @@ namespace Engine {
 class CustomMesh : public Mesh
 {
 public:
-	CustomMesh(Camera* pCamera, glm::vec3 position);
+	CustomMesh(Camera* pCamera, Light* pLight, glm::vec3 position);
 	~CustomMesh();
 
 private:
@@ -31,6 +32,7 @@ private:
 
 	GLuint* _vertexPositionBufferID;
 	GLuint* _vertexUVBufferID;
+	GLuint* _vertexNormalBufferID;
 	GLuint _programID = -1;
 	Engine::ObjFileData* _pObjFileData;
 	unsigned int* _textureID;
