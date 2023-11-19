@@ -5,7 +5,7 @@ namespace GUI
 {
 	ObjectPropertiesGUI::ObjectPropertiesGUI() : ImGuiWindow((char*)"Object Properties")
 	{
-
+		
 	}
 
 	ObjectPropertiesGUI::~ObjectPropertiesGUI()
@@ -46,11 +46,22 @@ namespace GUI
 				}
 			}
 
+			ImGui::Text("Shininess: ");
+			ImGui::SameLine();
+			if (ImGui::DragFloat("##Shininess", &_shininess, 0.1f))
+			{
+				if (_pMesh != nullptr)
+				{
+					_pMesh->SetShininess(_shininess);
+				}
+			}
+
 			ImGui::End();
 		}
 	}
 	void ObjectPropertiesGUI::SetObject(Mesh* pMesh)
 	{
 		_pMesh = pMesh;
+		_shininess = _pMesh->GetShininess();
 	}
 }

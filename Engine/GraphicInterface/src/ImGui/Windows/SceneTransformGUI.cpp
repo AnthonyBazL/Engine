@@ -21,6 +21,7 @@ namespace GUI
 
 		_diffuseLightIntensity = _pLight->GetDiffuseIntensity();
 		_ambiantLightIntensity = _pLight->GetAmbiantIntensity();
+		_specularLightIntensity = _pLight->GetSpecularIntensity();
 	}
 
 	SceneTransformGUI::~SceneTransformGUI()
@@ -29,8 +30,6 @@ namespace GUI
 
 	void SceneTransformGUI::Render()
 	{
-		ImGui::ShowDemoWindow();
-
 		if (ImGui::Begin(_name, &_opened))
 		{
 			// Camera settings
@@ -89,6 +88,13 @@ namespace GUI
 				if (ImGui::DragFloat("##Ambiant Light Intensity", &_ambiantLightIntensity, 0.01f))
 				{
 					_pLight->SetAmbiantIntensity(_ambiantLightIntensity);
+				}
+
+				ImGui::Text("Specular intensity:");
+				ImGui::SameLine();
+				if (ImGui::DragFloat("##Specular Light Intensity", &_specularLightIntensity, 0.01f))
+				{
+					_pLight->SetSpecularIntensity(_specularLightIntensity);
 				}
 
 				ImGui::Text("Range:");

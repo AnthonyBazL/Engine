@@ -12,16 +12,17 @@ CustomMesh::~CustomMesh()
 void CustomMesh::Initialize()
 {
     // Load OBJ file
-    _pObjFileData = (Engine::ObjFileData*)Engine::LoadObjFile("C:\\Users\\abaze\\Documents\\C++ Projects\\Engine\\Engine\\GraphicInterface\\resources\\obj\\MultipleObject.obj");
+    //_pObjFileData = (Engine::ObjFileData*)Engine::LoadObjFile("C:\\Users\\abaze\\Documents\\C++ Projects\\Engine\\Engine\\GraphicInterface\\resources\\obj\\MultipleObject.obj");
+    _pObjFileData = (Engine::ObjFileData*)Engine::LoadObjFile("C:\\Users\\abaze\\Documents\\C++ Projects\\Engine\\Engine\\GraphicInterface\\resources\\obj\\Sphere.obj");
 
     // Load texture
     const int objectCount = _pObjFileData->objects.size();
     std::vector<Engine::TextureData*> textureData;
-    textureData.push_back((Engine::TextureData*)Engine::LoadTextureFile("C:\\Users\\abaze\\Documents\\C++ Projects\\Engine\\Engine\\GraphicInterface\\resources\\textures\\test.jpg"));
-    textureData.push_back((Engine::TextureData*)Engine::LoadTextureFile("C:\\Users\\abaze\\Documents\\C++ Projects\\Engine\\Engine\\GraphicInterface\\resources\\textures\\suzanne.jpg"));
+    //textureData.push_back((Engine::TextureData*)Engine::LoadTextureFile("C:\\Users\\abaze\\Documents\\C++ Projects\\Engine\\Engine\\GraphicInterface\\resources\\textures\\test.jpg"));
+    //textureData.push_back((Engine::TextureData*)Engine::LoadTextureFile("C:\\Users\\abaze\\Documents\\C++ Projects\\Engine\\Engine\\GraphicInterface\\resources\\textures\\suzanne.jpg"));
     textureData.push_back((Engine::TextureData*)Engine::LoadTextureFile("C:\\Users\\abaze\\Documents\\C++ Projects\\Engine\\Engine\\GraphicInterface\\resources\\textures\\rock.jpg"));
 
-    _textureID = new unsigned int[objectCount];
+    _textureID = new GLuint[objectCount];
 
     // Load Shaders
     _programID = ShaderLoader::LoadShaders("src/Shaders/CustomVertexShader.vert", "src/Shaders/CustomFragmentShader.frag");
@@ -50,19 +51,19 @@ void CustomMesh::Initialize()
     for (int i = 0; i < objectCount; ++i)
     {
         // Vertex positions
-        // The following commands will talk about our '_vertexPositionBuffer' buffer
+        // The following commands will talk about our '_vertexPositionBufferID' buffer
         glBindBuffer(GL_ARRAY_BUFFER, _vertexPositionBufferID[i]);
         // Give our buffer to OpenGL.
         glBufferData(GL_ARRAY_BUFFER, _pObjFileData->objects[i]->positions_sorted.size() * sizeof(float), _pObjFileData->objects[i]->positions_sorted.data(), GL_STATIC_DRAW);
 
         // Vertex UVs
-        // The following commands will talk about our '_vertexPositionBuffer' buffer
+        // The following commands will talk about our '_vertexUVBufferID' buffer
         glBindBuffer(GL_ARRAY_BUFFER, _vertexUVBufferID[i]);
         // Give our buffer to OpenGL.
         glBufferData(GL_ARRAY_BUFFER, _pObjFileData->objects[i]->uvs_sorted.size() * sizeof(float), _pObjFileData->objects[i]->uvs_sorted.data(), GL_STATIC_DRAW);
 
         // Vertex normals
-        // The following commands will talk about our '_vertexPositionBuffer' buffer
+        // The following commands will talk about our '_vertexNormalBufferID' buffer
         glBindBuffer(GL_ARRAY_BUFFER, _vertexNormalBufferID[i]);
         // Give our buffer to OpenGL.
         glBufferData(GL_ARRAY_BUFFER, _pObjFileData->objects[i]->normals_sorted.size() * sizeof(float), _pObjFileData->objects[i]->normals_sorted.data(), GL_STATIC_DRAW);
@@ -70,8 +71,8 @@ void CustomMesh::Initialize()
         // Texture config
         if (textureData[i])
         {
-            //glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-            //glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
             glBindTexture(GL_TEXTURE_2D, _textureID[i]); // Select the texture of the first object we want to render
             glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, textureData[i]->width, textureData[i]->height, 0, GL_RGB, GL_UNSIGNED_BYTE, textureData[i]->data);
@@ -82,8 +83,6 @@ void CustomMesh::Initialize()
             std::cout << "Failed to load texture file" << std::endl;
         }
     }
-
-
 
     glEnable(GL_DEPTH_TEST);
 
@@ -98,31 +97,36 @@ void CustomMesh::Render()
     // Use our shader
     glUseProgram(_programID);
 
-    // Or, for an ortho camera :
-    //glm::mat4 Projection = glm::ortho(-10.0f,10.0f,-10.0f,10.0f,0.0f,100.0f); // In world coordinates
-
-    // Our ModelViewProjection : multiplication of our 3 matrices
-    glm::mat4 mvp = _pCamera->GetProjectionMatrix() * _pCamera->GetViewMatrix() * _modelMatrix; // Remember, matrix multiplication is the other way around
-
-    // Get a handle for our "MVP" uniform
-    // Only during the initialisation
-    GLuint MatrixID = glGetUniformLocation(_programID, "MVP");
-
-    // Send our transformation to the currently bound shader, in the "MVP" uniform
-    // This is done in the main loop since each model will have a different MVP matrix (At least for the M part)
-    glUniformMatrix4fv(MatrixID, 1, GL_FALSE, &mvp[0][0]);
+    GLuint modelID = glGetUniformLocation(_programID, "u_model");
+    glUniformMatrix4fv(modelID, 1, GL_FALSE, &_modelMatrix[0][0]);
+    GLuint viewID = glGetUniformLocation(_programID, "u_view");
+    glUniformMatrix4fv(viewID, 1, GL_FALSE, &_pCamera->GetViewMatrix()[0][0]);
+    GLuint projectionID = glGetUniformLocation(_programID, "u_projection");
+    glUniformMatrix4fv(projectionID, 1, GL_FALSE, &_pCamera->GetProjectionMatrix()[0][0]);
 
     // Pass light position to shader
     GLuint lightPositionID = glGetUniformLocation(_programID, "u_lightPosition");
     glUniform3fv(lightPositionID, 1, glm::value_ptr(_pLight->GetWorldPosition()));
 
+    // Pass camera position to shader
+    GLuint cameraPositionID = glGetUniformLocation(_programID, "u_cameraPosition");
+    glUniform3fv(cameraPositionID, 1, glm::value_ptr(_pCamera->GetWorldPosition()));
+
     // Pass diffuse light intensity to shader
     GLuint diffuseLightIntensityID = glGetUniformLocation(_programID, "u_diffuseLightIntensity");
     glUniform1f(diffuseLightIntensityID, _pLight->GetDiffuseIntensity());
 
-    // Pass diffuse light intensity to shader
+    // Pass ambiant light intensity to shader
     GLuint ambiantLightIntensityID = glGetUniformLocation(_programID, "u_ambiantLightIntensity");
     glUniform1f(ambiantLightIntensityID, _pLight->GetAmbiantIntensity());
+
+    // Pass specular light intensity to shader
+    GLuint specularLightIntensityID = glGetUniformLocation(_programID, "u_specularLightIntensity");
+    glUniform1f(specularLightIntensityID, _pLight->GetSpecularIntensity());
+
+    // Pass shininess of object to shader
+    GLuint shininessID = glGetUniformLocation(_programID, "u_shininess");
+    glUniform1f(shininessID, _shininess);
 
     int objectCount = _pObjFileData->objects.size();
     for (int i = 0; i < objectCount; ++i)
@@ -155,7 +159,7 @@ void CustomMesh::Render()
         glEnableVertexAttribArray(2);
         glBindBuffer(GL_ARRAY_BUFFER, _vertexNormalBufferID[i]);
         glVertexAttribPointer(
-            2,                  // attribute 1. No particular reason for 1, but must match the layout in the shader.
+            2,                  // attribute 2. No particular reason for 2, but must match the layout in the shader.
             3,                  // size
             GL_FLOAT,           // type
             GL_FALSE,           // normalized?
@@ -173,5 +177,6 @@ void CustomMesh::Render()
 
         glDisableVertexAttribArray(0);
         glDisableVertexAttribArray(1);
+        glDisableVertexAttribArray(2);
     }
 }

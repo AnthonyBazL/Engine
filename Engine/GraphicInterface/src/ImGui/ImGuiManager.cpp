@@ -28,9 +28,9 @@ namespace GUI
 		ImGui_ImplGlfw_Shutdown();
 		ImGui::DestroyContext();
 
-		for (const auto& e : _windowsMap)
+		for (const auto& window : _windowsMap)
 		{
-			delete e.second;
+			delete window.second;
 		}
 
 		_windowsMap.clear();
@@ -42,9 +42,9 @@ namespace GUI
 		ImGui_ImplGlfw_NewFrame();
 		ImGui::NewFrame();
 
-		for (const auto& e : _windowsMap)
+		for (const auto& window : _windowsMap)
 		{
-			e.second->Render();
+			window.second->Render();
 		}
 
 		ImGui::Render();

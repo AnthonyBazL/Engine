@@ -26,6 +26,8 @@ public:
 	void Translate(glm::vec3 move);
 	void Rotate(glm::vec3 rotation);
 	void Scale(glm::vec3 scale);
+	float GetShininess() { return _shininess; }
+	void SetShininess(float shininess) { _shininess = shininess; }
 
 protected:
 	virtual void Initialize() = 0;
@@ -37,5 +39,8 @@ protected:
 	glm::vec3 _position;
 	glm::vec3 _rotation;
 	glm::vec3 _scale;
+
+	// TODO: Create Material class
+	float _shininess = 32;
 };
 

@@ -35,7 +35,7 @@ The goal is to acquire some knowledge on various rendering topics but also on di
     - [x] Multiple object from an OBJ file
   - [x] Apply a simple unlit shader
   - [x] Apply a simple texture 2D shader
-  - [ ] Apply a simple lit shader [WIP]
+  - [x] Apply a simple lit shader
   - [ ] Apply a 3D texture shader
   
   ### DirectX rendering

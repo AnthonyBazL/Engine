@@ -34,7 +34,7 @@ private:
 	GLuint* _vertexUVBufferID;
 	GLuint* _vertexNormalBufferID;
 	GLuint _programID = -1;
+	GLuint* _textureID;
 	Engine::ObjFileData* _pObjFileData;
-	unsigned int* _textureID;
 };
 

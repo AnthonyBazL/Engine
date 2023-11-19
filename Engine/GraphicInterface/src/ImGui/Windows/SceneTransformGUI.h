@@ -25,6 +25,7 @@ namespace GUI
 		float _lightPosition[3];
 		float _diffuseLightIntensity = 1.0f;
 		float _ambiantLightIntensity = 1.0f;
+		float _specularLightIntensity = 1.0f;
 		float _lightRange = 10.0f;
 		float _camFov = 45.0f;
 		float _camNear = 0.0f;
