@@ -1,8 +1,15 @@
 #include "CustomMesh.h"
 
 
-CustomMesh::CustomMesh(Camera* pCamera, Light* pLight, glm::vec3 position) : Mesh(pCamera, pLight, position)
+CustomMesh::CustomMesh(Camera* pCamera, Light* pLight, glm::vec3 position, 
+    std::string objFilePath, std::vector<std::string> textureFilesPath, 
+    std::string vertexShaderFilePath, std::string fragmentShaderFilePath) 
+    : Mesh(pCamera, pLight, position)
 {
+    _objFilePath = objFilePath;
+    _textureFilesPath = textureFilesPath;
+    _vertexShaderFilePath = vertexShaderFilePath;
+    _fragmentShaderFilePath = fragmentShaderFilePath;
 }
 
 CustomMesh::~CustomMesh()
@@ -12,20 +19,21 @@ CustomMesh::~CustomMesh()
 void CustomMesh::Initialize()
 {
     // Load OBJ file
-    //_pObjFileData = (Engine::ObjFileData*)Engine::LoadObjFile("C:\\Users\\abaze\\Documents\\C++ Projects\\Engine\\Engine\\GraphicInterface\\resources\\obj\\MultipleObject.obj");
-    _pObjFileData = (Engine::ObjFileData*)Engine::LoadObjFile("C:\\Users\\abaze\\Documents\\C++ Projects\\Engine\\Engine\\GraphicInterface\\resources\\obj\\Sphere.obj");
+    _pObjFileData = (Engine::ObjFileData*)Engine::LoadObjFile(_objFilePath);
 
     // Load texture
     const int objectCount = _pObjFileData->objects.size();
     std::vector<Engine::TextureData*> textureData;
-    //textureData.push_back((Engine::TextureData*)Engine::LoadTextureFile("C:\\Users\\abaze\\Documents\\C++ Projects\\Engine\\Engine\\GraphicInterface\\resources\\textures\\test.jpg"));
-    //textureData.push_back((Engine::TextureData*)Engine::LoadTextureFile("C:\\Users\\abaze\\Documents\\C++ Projects\\Engine\\Engine\\GraphicInterface\\resources\\textures\\suzanne.jpg"));
-    textureData.push_back((Engine::TextureData*)Engine::LoadTextureFile("C:\\Users\\abaze\\Documents\\C++ Projects\\Engine\\Engine\\GraphicInterface\\resources\\textures\\rock.jpg"));
+    
+    for (int i = 0; i < _textureFilesPath.size(); ++i)
+    {
+        textureData.push_back((Engine::TextureData*)Engine::LoadTextureFile(_textureFilesPath[i]));
+    }
 
     _textureID = new GLuint[objectCount];
 
     // Load Shaders
-    _programID = ShaderLoader::LoadShaders("src/Shaders/CustomVertexShader.vert", "src/Shaders/CustomFragmentShader.frag");
+    _programID = ShaderLoader::LoadShaders(_vertexShaderFilePath.c_str(), _fragmentShaderFilePath.c_str());
 
     // VAO
     GLuint VertexArrayID;

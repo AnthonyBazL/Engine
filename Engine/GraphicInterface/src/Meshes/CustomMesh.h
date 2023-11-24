@@ -23,7 +23,9 @@ namespace Engine {
 class CustomMesh : public Mesh
 {
 public:
-	CustomMesh(Camera* pCamera, Light* pLight, glm::vec3 position);
+	CustomMesh(Camera* pCamera, Light* pLight, glm::vec3 position, 
+		std::string objFilePath, std::vector<std::string> textureFilesPath, 
+		std::string vertexShaderFilePath, std::string fragmentShaderFilePath);
 	~CustomMesh();
 
 private:
@@ -36,5 +38,9 @@ private:
 	GLuint _programID = -1;
 	GLuint* _textureID;
 	Engine::ObjFileData* _pObjFileData;
+	std::string _objFilePath;
+	std::vector<std::string> _textureFilesPath;
+	std::string _vertexShaderFilePath;
+	std::string _fragmentShaderFilePath;
 };
 
