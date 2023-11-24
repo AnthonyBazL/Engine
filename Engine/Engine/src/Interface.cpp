@@ -1,7 +1,14 @@
 #include "Interface.h"
 #include <stdio.h>
 
-namespace Engine {
+
+namespace Engine 
+{
+	void Initialize()
+	{
+		Core* core = new Core();
+	}
+
 	void Print()
 	{
 		printf("Welcome to the Engine!\n");
