@@ -2,10 +2,10 @@
 
 namespace Engine
 {
-	CustomMesh::CustomMesh(Camera* pCamera, Light* pLight, float* position,
+	CustomMesh::CustomMesh(float* position,
 		std::string objFilePath, std::vector<std::string> textureFilesPath,
 		std::string vertexShaderFilePath, std::string fragmentShaderFilePath)
-		: Mesh(pCamera, pLight, position)
+		: Mesh(position)
 	{
 		_objFilePath = objFilePath;
 		_textureFilesPath = textureFilesPath;

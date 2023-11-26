@@ -16,7 +16,7 @@ namespace Engine
 	class CustomMesh : public Mesh
 	{
 	public:
-		CustomMesh(Camera* pCamera, Light* pLight, float* position,
+		CustomMesh(float* position,
 			std::string objFilePath, std::vector<std::string> textureFilesPath,
 			std::string vertexShaderFilePath, std::string fragmentShaderFilePath);
 		~CustomMesh();

@@ -6,9 +6,9 @@ namespace Engine
 	{
 		_pCamera = new Camera(_cameraPosition);
 		_pLight = new Light(_lightPosition);
-		_meshes.push_back(new Triangle(_pCamera, _pLight, _firstTrianglePosition));
-		_meshes.push_back(new Triangle(_pCamera, _pLight, _secondTrianglePosition));
-		_meshes.push_back(new CustomMesh(_pCamera, _pLight, _customMeshPosition,
+		_meshes.push_back(new Triangle(_firstTrianglePosition));
+		_meshes.push_back(new Triangle(_secondTrianglePosition));
+		_meshes.push_back(new CustomMesh(_customMeshPosition,
 			"C:\\Users\\abaze\\Documents\\C++ Projects\\Engine\\Engine\\GraphicInterface\\resources\\obj\\Sphere.obj", // Obj
 			{ "C:\\Users\\abaze\\Documents\\C++ Projects\\Engine\\Engine\\GraphicInterface\\resources\\textures\\rock.jpg" }, // Textures
 			"src/Shaders/CustomVertexShader.vert", "src/Shaders/CustomFragmentShader.frag")); // Shaders

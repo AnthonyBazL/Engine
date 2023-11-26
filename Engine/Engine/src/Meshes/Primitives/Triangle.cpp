@@ -16,7 +16,7 @@ namespace Engine
 	   0.0f,  0.0f, 1.0f,
 	};
 
-	Triangle::Triangle(Camera* pCamera, Light* pLight, float* position) : Mesh(pCamera, pLight, position)
+	Triangle::Triangle(float* position) : Mesh(position)
 	{
 	}
 

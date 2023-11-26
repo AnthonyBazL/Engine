@@ -17,7 +17,7 @@ namespace Engine
 	class Triangle : public Mesh
 	{
 	public:
-		Triangle(Camera* pCamera, Light* pLight, float* position);
+		Triangle(float* position);
 		~Triangle();
 
 	private:

@@ -2,10 +2,8 @@
 
 namespace Engine
 {
-	Mesh::Mesh(Camera* pCamera, Light* pLight, float* position)
+	Mesh::Mesh(float* position)
 	{
-		_pCamera = pCamera;
-		_pLight = pLight;
 		Translate(position);
 		_rotation = glm::vec3(0.0f);
 		_scale = glm::vec3(1.0f);
