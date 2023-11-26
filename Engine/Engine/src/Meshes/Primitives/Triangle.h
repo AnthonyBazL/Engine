@@ -21,8 +21,8 @@ namespace Engine
 		~Triangle();
 
 	private:
-		void Initialize() override;
-		void Render() override;
+		//void Initialize() override;
+		//void Render() override;
 
 		GLuint _vertexBuffer = -1;
 		GLuint _colorBuffer = -1;

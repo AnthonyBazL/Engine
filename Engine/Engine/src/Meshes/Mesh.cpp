@@ -9,6 +9,7 @@ namespace Engine
 		Translate(position);
 		_rotation = glm::vec3(0.0f);
 		_scale = glm::vec3(1.0f);
+		_pMeshData = new MeshData();
 	}
 
 	void Mesh::Translate(float* newPosition)

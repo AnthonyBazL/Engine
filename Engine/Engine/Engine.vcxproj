@@ -96,6 +96,7 @@
     <ClCompile Include="includes\ImGui\imgui_impl_opengl3.cpp" />
     <ClCompile Include="includes\ImGui\imgui_tables.cpp" />
     <ClCompile Include="includes\ImGui\imgui_widgets.cpp" />
+    <ClCompile Include="src\Meshes\MeshData.cpp" />
     <ClCompile Include="src\Components\Camera.cpp" />
     <ClCompile Include="src\Components\Component.cpp" />
     <ClCompile Include="src\Components\Light.cpp" />
@@ -127,6 +128,7 @@
     <ClInclude Include="includes\ImGui\imstb_rectpack.h" />
     <ClInclude Include="includes\ImGui\imstb_textedit.h" />
     <ClInclude Include="includes\ImGui\imstb_truetype.h" />
+    <ClInclude Include="src\Meshes\MeshData.h" />
     <ClInclude Include="src\Components\Camera.h" />
     <ClInclude Include="src\Components\Component.h" />
     <ClInclude Include="src\Components\Light.h" />

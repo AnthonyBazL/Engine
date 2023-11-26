@@ -39,9 +39,9 @@ namespace Engine
 	private:
 		enum FaceType { TRIANGLE = 0, QUAD = 1 };
 
-		void Split(std::string const& str, const char delim, std::vector<std::string>& out);
-		void SortVertices(ObjFileData* objFileData);
+		static void Split(std::string const& str, const char delim, std::vector<std::string>& out);
+		static void SortVertices(ObjFileData* objFileData);
 	public:
-		ObjFileData* LoadFile(std::string filePath);
+		static ObjFileData* LoadFile(std::string filePath);
 	};
 }

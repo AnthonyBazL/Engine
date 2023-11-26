@@ -3,8 +3,6 @@
 #include "../GUI/ImGuiManager.h"
 #include <vector>
 
-//using namespace GUI;
-
 namespace Engine
 {
 	class OpenGLRenderer : public Renderer
@@ -22,7 +20,8 @@ namespace Engine
 
 		int CreateWindow();
 		int Render();
-		GLuint LoadShaders(const char* vertex_file_path, const char* fragment_file_path);
+		bool PrepareMeshData(MeshData* pMeshData);
+		void DrawMesh(Mesh* pMesh);
 	};
 }
 
