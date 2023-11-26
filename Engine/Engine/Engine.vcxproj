@@ -47,22 +47,27 @@
     <LinkIncremental>true</LinkIncremental>
     <OutDir>$(SolutionDir)$(ProjectName)\bin\$(Platform)_$(Configuration)\</OutDir>
     <IntDir>$(SolutionDir)$(ProjectName)\bin_intermediate\$(Platform)_$(Configuration)\</IntDir>
+    <LibraryPath>$(SolutionDir)$(ProjectName)\libs;$(LibraryPath)</LibraryPath>
+    <IncludePath>$(SolutionDir)$(ProjectName)\includes;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LinkIncremental>false</LinkIncremental>
     <OutDir>$(SolutionDir)$(ProjectName)\bin\$(Platform)_$(Configuration)\</OutDir>
     <IntDir>$(SolutionDir)$(ProjectName)\bin_intermediate\$(Platform)_$(Configuration)\</IntDir>
+    <LibraryPath>$(SolutionDir)$(ProjectName)\libs;$(LibraryPath)</LibraryPath>
+    <IncludePath>$(SolutionDir)$(ProjectName)\includes;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>ENGINE_DLL_BUILD;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>ENGINE_DLL_BUILD;USE_OPENGL;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalDependencies>opengl32.lib;GLEW/glew32.lib;GLFW/glfw3.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -71,7 +76,7 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>ENGINE_DLL_BUILD;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>ENGINE_DLL_BUILD;USE_OPENGL;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
     </ClCompile>
     <Link>
@@ -79,19 +84,73 @@
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalDependencies>opengl32.lib;GLEW/glew32.lib;GLFW/glfw3.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Core.cpp" />
+    <ClCompile Include="includes\ImGui\imgui.cpp" />
+    <ClCompile Include="includes\ImGui\imgui_demo.cpp" />
+    <ClCompile Include="includes\ImGui\imgui_draw.cpp" />
+    <ClCompile Include="includes\ImGui\imgui_impl_glfw.cpp" />
+    <ClCompile Include="includes\ImGui\imgui_impl_opengl3.cpp" />
+    <ClCompile Include="includes\ImGui\imgui_tables.cpp" />
+    <ClCompile Include="includes\ImGui\imgui_widgets.cpp" />
+    <ClCompile Include="src\Meshes\MeshData.cpp" />
+    <ClCompile Include="src\Components\Camera.cpp" />
+    <ClCompile Include="src\Components\Component.cpp" />
+    <ClCompile Include="src\Components\Light.cpp" />
+    <ClCompile Include="src\Components\Scene.cpp" />
+    <ClCompile Include="src\GUI\ImGuiManager.cpp" />
+    <ClCompile Include="src\GUI\ImGuiWindow.cpp" />
+    <ClCompile Include="src\GUI\Windows\ObjectPropertiesGUI.cpp" />
+    <ClCompile Include="src\GUI\Windows\ProfilerGUI.cpp" />
+    <ClCompile Include="src\GUI\Windows\SceneTransformGUI.cpp" />
     <ClCompile Include="src\Loader\ObjLoader.cpp" />
     <ClCompile Include="src\Interface.cpp" />
+    <ClCompile Include="src\Loader\ShaderLoader.cpp" />
     <ClCompile Include="src\Loader\stb_image.cpp" />
     <ClCompile Include="src\Loader\TextureLoader.cpp" />
+    <ClCompile Include="src\Meshes\CustomMesh.cpp" />
+    <ClCompile Include="src\Meshes\Mesh.cpp" />
+    <ClCompile Include="src\Meshes\Primitives\Triangle.cpp" />
+    <ClCompile Include="src\Renderer\OpenGLRenderer.cpp" />
+    <ClCompile Include="src\Renderer\Renderer.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Core.h" />
+    <ClInclude Include="includes\ImGui\imconfig.h" />
+    <ClInclude Include="includes\ImGui\imgui.h" />
+    <ClInclude Include="includes\ImGui\imgui_impl_glfw.h" />
+    <ClInclude Include="includes\ImGui\imgui_impl_opengl3.h" />
+    <ClInclude Include="includes\ImGui\imgui_impl_opengl3_loader.h" />
+    <ClInclude Include="includes\ImGui\imgui_internal.h" />
+    <ClInclude Include="includes\ImGui\imstb_rectpack.h" />
+    <ClInclude Include="includes\ImGui\imstb_textedit.h" />
+    <ClInclude Include="includes\ImGui\imstb_truetype.h" />
+    <ClInclude Include="src\Meshes\MeshData.h" />
+    <ClInclude Include="src\Components\Camera.h" />
+    <ClInclude Include="src\Components\Component.h" />
+    <ClInclude Include="src\Components\Light.h" />
+    <ClInclude Include="src\Components\Scene.h" />
+    <ClInclude Include="src\GUI\ImGuiManager.h" />
+    <ClInclude Include="src\GUI\ImGuiWindow.h" />
+    <ClInclude Include="src\GUI\Windows\ObjectPropertiesGUI.h" />
+    <ClInclude Include="src\GUI\Windows\ProfilerGUI.h" />
+    <ClInclude Include="src\GUI\Windows\SceneTransformGUI.h" />
     <ClInclude Include="src\Loader\ObjLoader.h" />
     <ClInclude Include="src\Interface.h" />
+    <ClInclude Include="src\Loader\ShaderLoader.h" />
     <ClInclude Include="src\Loader\stb_image.h" />
     <ClInclude Include="src\Loader\TextureLoader.h" />
+    <ClInclude Include="src\Meshes\CustomMesh.h" />
+    <ClInclude Include="src\Meshes\Mesh.h" />
+    <ClInclude Include="src\Meshes\Primitives\Triangle.h" />
+    <ClInclude Include="src\Renderer\OpenGLRenderer.h" />
+    <ClInclude Include="src\Renderer\Renderer.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="includes\ImGui\imgui.ini" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

@@ -1,10 +1,8 @@
 #pragma once
 
-#if USE_OPENGL
-#include "OpenGLRenderer.h"
-#endif
+#include "../../Engine/Core.h"
 
-#include "Scene.h"
+
 
 namespace GraphicInterface
 {
@@ -16,8 +14,7 @@ namespace GraphicInterface
 		void Run();
 
 	private:
-		Renderer* _pRenderer;
-		Scene* _pScene;
+		Engine::Core* _pEngine;
 	};
 }
 

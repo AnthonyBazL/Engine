@@ -4,18 +4,16 @@ namespace GraphicInterface
 {
 	Application::Application()
 	{
-		_pScene = new Scene();
-		_pRenderer = new OpenGLRenderer(_pScene);
+		_pEngine->GetInstance().Initialize();
 	}
 
 	Application::~Application()
 	{
-		delete _pRenderer;
+		
 	}
 
 	void Application::Run()
-	{
-		_pRenderer->StartRendering();
+	{		
 		while(true)
 		{ }
 	}
