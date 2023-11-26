@@ -1,4 +1,5 @@
 #pragma once
+#if USE_OPENGL
 #include "Renderer.h"
 #include "../GUI/ImGuiManager.h"
 #include <vector>
@@ -24,4 +25,4 @@ namespace Engine
 		void DrawMesh(Mesh* pMesh);
 	};
 }
-
+#endif

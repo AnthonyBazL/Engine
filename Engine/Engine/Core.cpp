@@ -6,8 +6,10 @@ namespace Engine
 	{
 #if USE_OPENGL
 		_pRenderer = new OpenGLRenderer(new Scene());
+#elif USE_VULKAN
+		_pRenderer = new VulkanRenderer(new Scene());
 #else
-		std::cout << "Engine only support OpenGL for now, please define USE_OPENGL as preprocessor argument." << std::endl;
+		std::cout << "Engine only support OpenGL and Vulkan for now, please define USE_OPENGL or USE_VULKAN as preprocessor argument." << std::endl;
 #endif
 	}
 

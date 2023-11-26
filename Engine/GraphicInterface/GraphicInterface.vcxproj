@@ -48,14 +48,14 @@
     <OutDir>$(SolutionDir)$(ProjectName)\bin\$(Platform)_$(Configuration)\</OutDir>
     <IntDir>$(SolutionDir)$(ProjectName)\bin_intermediate\$(Platform)_$(Configuration)\</IntDir>
     <LibraryPath>$(SolutionDir)Engine\bin\$(Platform)_$(Configuration)\;$(SolutionDir)Engine\libs;$(LibraryPath)</LibraryPath>
-    <IncludePath>$(SolutionDir)$(ProjectName)\includes;$(IncludePath)</IncludePath>
+    <IncludePath>E:\VulkanSDK\1.3.268.0\Include;$(SolutionDir)$(ProjectName)\includes;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LinkIncremental>false</LinkIncremental>
     <OutDir>$(SolutionDir)$(ProjectName)\bin\$(Platform)_$(Configuration)\</OutDir>
     <IntDir>$(SolutionDir)$(ProjectName)\bin_intermediate\$(Platform)_$(Configuration)\</IntDir>
     <LibraryPath>$(SolutionDir)Engine\bin\$(Platform)_$(Configuration)\;$(SolutionDir)Engine\libs;$(LibraryPath)</LibraryPath>
-    <IncludePath>$(SolutionDir)$(ProjectName)\includes;$(IncludePath)</IncludePath>
+    <IncludePath>E:\VulkanSDK\1.3.268.0\Include;$(SolutionDir)$(ProjectName)\includes;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>

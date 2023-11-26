@@ -1,5 +1,6 @@
 #pragma once
 #include "src/Renderer/OpenGLRenderer.h"
+#include "src/Renderer/VulkanRenderer.h"
 
 namespace Engine
 {

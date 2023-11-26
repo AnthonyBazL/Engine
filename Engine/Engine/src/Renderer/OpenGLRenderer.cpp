@@ -1,3 +1,4 @@
+#if USE_OPENGL
 #include "OpenGLRenderer.h"
 
 namespace Engine
@@ -34,7 +35,7 @@ namespace Engine
         glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE); // We don't want the old OpenGL 
 
         // Open a window and create its OpenGL context
-        _pWnd = glfwCreateWindow(1280, 720, "Graphic Interface", NULL, NULL);
+        _pWnd = glfwCreateWindow(1280, 720, "Graphic Interface (OpenGL)", NULL, NULL);
         if (_pWnd == NULL) {
             fprintf(stderr, "Failed to open GLFW window. If you have an Intel GPU, they are not 3.3 compatible. Try the 2.1 version of the tutorials.\n");
             glfwTerminate();
@@ -271,3 +272,4 @@ namespace Engine
         pMeshData->SetInitialized(true);
     }
 }
+#endif

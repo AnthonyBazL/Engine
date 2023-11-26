@@ -31,5 +31,7 @@ namespace Engine
 		Scene* _pScene;
 		RenderState _renderState = RenderState::UNINITIALIZED; // TODO: To manage
 		void* _pRenderFunc = nullptr; // TODO: Manage rendering asynchronously in a seperate thread
+
+		virtual int CreateWindow() = 0;
 	};
 }
