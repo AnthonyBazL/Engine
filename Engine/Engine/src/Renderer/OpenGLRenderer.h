@@ -21,6 +21,7 @@ namespace Engine
 
 		int CreateWindow();
 		int Render();
+		void CleanUp();
 		bool PrepareMeshData(MeshData* pMeshData);
 		void DrawMesh(Mesh* pMesh);
 	};

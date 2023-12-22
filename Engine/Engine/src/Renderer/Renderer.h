@@ -33,5 +33,6 @@ namespace Engine
 		void* _pRenderFunc = nullptr; // TODO: Manage rendering asynchronously in a seperate thread
 
 		virtual int CreateWindow() = 0;
+		virtual void CleanUp() = 0;
 	};
 }

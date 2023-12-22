@@ -94,6 +94,10 @@ namespace Engine
         return 0;
     }
 
+    void OpenGLRenderer::CleanUp()
+    {
+    }
+
     void OpenGLRenderer::DrawMesh(Mesh* pMesh)
     {
         MeshData* pMeshData = pMesh->GetMeshData();

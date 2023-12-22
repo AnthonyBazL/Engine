@@ -14,6 +14,14 @@ namespace Engine
 
 	private:
 		int CreateWindow();
-		void Render();
+		void Render();		
+		void CleanUp();
+		void InitializeVulkan();
+		void CreateVulkanInstance();
+
+		GLFWwindow* _pWnd = nullptr;
+		VkInstance _vkInstance;
+		const uint32_t WIDTH = 800;
+		const uint32_t HEIGHT = 600;
 	};
 }
