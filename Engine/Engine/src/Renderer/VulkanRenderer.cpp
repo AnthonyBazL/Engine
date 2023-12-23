@@ -49,6 +49,8 @@ namespace Engine
 	
 	void VulkanRenderer::CleanUp()
 	{
+		vkDestroyDevice(_logicalDevice, nullptr);
+
 		if (_enableValidationLayers) {
 			DestroyDebugUtilsMessengerEXT(_vkInstance, _debugMessenger, nullptr);
 		}
@@ -62,6 +64,8 @@ namespace Engine
 	{
 		CreateVulkanInstance();
 		SetupDebugMessenger();
+		PickPhysicalDevice();
+		CreateLogicalDevice();
 	}
 
 	void VulkanRenderer::CreateVulkanInstance()
@@ -246,5 +250,121 @@ namespace Engine
 		// Here are all message types for which the specified callback will be triggered
 		createInfo.messageType = VK_DEBUG_UTILS_MESSAGE_TYPE_GENERAL_BIT_EXT | VK_DEBUG_UTILS_MESSAGE_TYPE_VALIDATION_BIT_EXT | VK_DEBUG_UTILS_MESSAGE_TYPE_PERFORMANCE_BIT_EXT;
 		createInfo.pfnUserCallback = DebugCallback;
+	}
+
+	// Found physical device that support Vulkan and fit with needs
+	void VulkanRenderer::PickPhysicalDevice()
+	{
+		uint32_t deviceCount = 0;
+		vkEnumeratePhysicalDevices(_vkInstance, &deviceCount, nullptr);
+
+		// If there is no devices found it means that none of physical device support Vulkan
+		if (deviceCount == 0) 
+		{
+			throw std::runtime_error("Failed to find GPUs with Vulkan support!");
+		}
+
+		std::vector<VkPhysicalDevice> devices(deviceCount);
+		vkEnumeratePhysicalDevices(_vkInstance, &deviceCount, devices.data());
+
+		for (const auto& device : devices) 
+		{
+			if (IsDeviceSuitable(device)) 
+			{
+				_physicalDevice = device;
+				break;
+			}
+		}
+
+		if (_physicalDevice == VK_NULL_HANDLE)
+		{
+			throw std::runtime_error("Failed to find a suitable GPU for Vulkan!");
+		}
+	}
+
+	bool VulkanRenderer::IsDeviceSuitable(VkPhysicalDevice device) 
+	{
+		VkPhysicalDeviceProperties deviceProperties;
+		vkGetPhysicalDeviceProperties(device, &deviceProperties);
+
+		// We can check features like texture compression, 64 bit floats, geometry shader, multi viewport rendering (VR), etc
+		VkPhysicalDeviceFeatures deviceFeatures;
+		vkGetPhysicalDeviceFeatures(device, &deviceFeatures);
+
+		QueueFamilyIndices indices = FindQueueFamilies(device);
+
+		return deviceProperties.deviceType == VK_PHYSICAL_DEVICE_TYPE_DISCRETE_GPU && deviceFeatures.geometryShader && indices.IsComplete();
+	}
+
+	// Every operations in Vulkan need to go through commands sent to queues and there is different type of queues
+	// We need to check which kind of queues families the graphic card support
+	QueueFamilyIndices VulkanRenderer::FindQueueFamilies(VkPhysicalDevice device)
+	{
+		QueueFamilyIndices indices;
+		
+		uint32_t queueFamilyCount = 0;
+		vkGetPhysicalDeviceQueueFamilyProperties(device, &queueFamilyCount, nullptr);
+
+		std::vector<VkQueueFamilyProperties> queueFamilies(queueFamilyCount);
+		vkGetPhysicalDeviceQueueFamilyProperties(device, &queueFamilyCount, queueFamilies.data());
+
+		int i = 0;
+		for (const auto& queueFamily : queueFamilies) 
+		{
+			if (queueFamily.queueFlags & VK_QUEUE_GRAPHICS_BIT) 
+			{
+				indices.graphicsFamily = i;
+			}
+
+			if (indices.IsComplete()) {
+				break;
+			}
+
+			++i;
+		}
+
+		return indices;
+	}
+
+	// Create a logical device that will interface with the physical device picked just before
+	void VulkanRenderer::CreateLogicalDevice()
+	{
+		QueueFamilyIndices indices = FindQueueFamilies(_physicalDevice);
+
+		VkDeviceQueueCreateInfo queueCreateInfo{};
+		queueCreateInfo.sType = VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO;
+		queueCreateInfo.queueFamilyIndex = indices.graphicsFamily.value();
+		queueCreateInfo.queueCount = 1;
+
+		float queuePriority = 1.0f;
+		queueCreateInfo.pQueuePriorities = &queuePriority;
+
+		// List features we'd like to use (like geometry shader for example)
+		VkPhysicalDeviceFeatures deviceFeatures{};
+
+		VkDeviceCreateInfo createInfo{};
+		createInfo.sType = VK_STRUCTURE_TYPE_DEVICE_CREATE_INFO;
+		createInfo.pQueueCreateInfos = &queueCreateInfo;
+		createInfo.queueCreateInfoCount = 1;
+		createInfo.pEnabledFeatures = &deviceFeatures;
+		createInfo.enabledExtensionCount = 0;
+
+		if (_enableValidationLayers) 
+		{
+			createInfo.enabledLayerCount = static_cast<uint32_t>(_validationLayers.size());
+			createInfo.ppEnabledLayerNames = _validationLayers.data();
+		}
+		else 
+		{
+			createInfo.enabledLayerCount = 0;
+		}
+
+		if (vkCreateDevice(_physicalDevice, &createInfo, nullptr, &_logicalDevice) != VK_SUCCESS) 
+		{
+			throw std::runtime_error("Failed to create logical device!");
+		}
+
+		// Get queue
+		vkGetDeviceQueue(_logicalDevice, indices.graphicsFamily.value(), 0, &_graphicsQueue);
 	}
 }

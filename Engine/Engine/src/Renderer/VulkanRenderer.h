@@ -1,9 +1,21 @@
 #pragma once
 #define GLFW_INCLUDE_VULKAN // It will include vulkan.h that embed all Vulkan definitions
 #include "Renderer.h"
+#include <optional>
+
 
 namespace Engine
 {
+	struct QueueFamilyIndices 
+	{
+		// We use "optional" as 0 can be a graphicFamily index so checking if value is assigned at least once guarantee that an index has been explicitly set
+		std::optional<uint32_t> graphicsFamily;
+
+		bool IsComplete() {
+			return graphicsFamily.has_value();
+		}
+	};
+
 	class VulkanRenderer : public Renderer
 	{
 	public:
@@ -30,9 +42,16 @@ namespace Engine
 			const VkAllocationCallbacks* pAllocator, VkDebugUtilsMessengerEXT* pDebugMessenger);
 		void DestroyDebugUtilsMessengerEXT(VkInstance instance, VkDebugUtilsMessengerEXT debugMessenger, const VkAllocationCallbacks* pAllocator);
 		void PopulateDebugMessengerCreateInfo(VkDebugUtilsMessengerCreateInfoEXT& createInfo);
+		void PickPhysicalDevice();
+		bool IsDeviceSuitable(VkPhysicalDevice device);
+		QueueFamilyIndices FindQueueFamilies(VkPhysicalDevice device);
+		void CreateLogicalDevice();
 
 		GLFWwindow* _pWnd = nullptr;
 		VkInstance _vkInstance;
+		VkDevice _logicalDevice;
+		VkPhysicalDevice _physicalDevice = VK_NULL_HANDLE;
+		VkQueue _graphicsQueue;
 		VkDebugUtilsMessengerEXT _debugMessenger;
 		const uint32_t WIDTH = 800;
 		const uint32_t HEIGHT = 600;
