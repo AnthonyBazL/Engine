@@ -33,7 +33,8 @@ namespace Engine
 		glm::vec4 vec;
 		auto test = matrix * vec;
 
-		while (!glfwWindowShouldClose(_pWnd)) {
+		while (!glfwWindowShouldClose(_pWnd)) 
+		{
 			glfwPollEvents();
 		}
 
@@ -49,6 +50,11 @@ namespace Engine
 	
 	void VulkanRenderer::CleanUp()
 	{
+		for (auto imageView : _swapChainImageViews) 
+		{
+			vkDestroyImageView(_logicalDevice, imageView, nullptr);
+		}
+
 		vkDestroySwapchainKHR(_logicalDevice, _swapChain, nullptr);
 		vkDestroyDevice(_logicalDevice, nullptr);
 
@@ -72,6 +78,7 @@ namespace Engine
 		PickPhysicalDevice();
 		CreateLogicalDevice();
 		CreateSwapChain();
+		CreateImageViews();
 	}
 
 	void VulkanRenderer::CreateVulkanInstance()
@@ -566,7 +573,7 @@ namespace Engine
 
 		if (vkCreateSwapchainKHR(_logicalDevice, &createInfo, nullptr, &_swapChain) != VK_SUCCESS) 
 		{
-			throw std::runtime_error("failed to create swap chain!");
+			throw std::runtime_error("Failed to create Vulkan swap chain!");
 		}
 
 		vkGetSwapchainImagesKHR(_logicalDevice, _swapChain, &imageCount, nullptr);
@@ -574,5 +581,33 @@ namespace Engine
 		vkGetSwapchainImagesKHR(_logicalDevice, _swapChain, &imageCount, _swapChainImages.data());
 		_swapChainExtent = extent;
 		_swapChainImageFormat = surfaceFormat.format;
+	}
+
+	void VulkanRenderer::CreateImageViews()
+	{
+		_swapChainImageViews.resize(_swapChainImages.size());
+
+		for (size_t i = 0; i < _swapChainImages.size(); ++i) 
+		{
+			VkImageViewCreateInfo createInfo{};
+			createInfo.sType = VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO;
+			createInfo.image = _swapChainImages[i];
+			createInfo.viewType = VK_IMAGE_VIEW_TYPE_2D;
+			createInfo.format = _swapChainImageFormat;
+			createInfo.components.r = VK_COMPONENT_SWIZZLE_IDENTITY;
+			createInfo.components.g = VK_COMPONENT_SWIZZLE_IDENTITY;
+			createInfo.components.b = VK_COMPONENT_SWIZZLE_IDENTITY;
+			createInfo.components.a = VK_COMPONENT_SWIZZLE_IDENTITY;
+			createInfo.subresourceRange.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
+			createInfo.subresourceRange.baseMipLevel = 0;
+			createInfo.subresourceRange.levelCount = 1;
+			createInfo.subresourceRange.baseArrayLayer = 0;
+			createInfo.subresourceRange.layerCount = 1;
+
+			if (vkCreateImageView(_logicalDevice, &createInfo, nullptr, &_swapChainImageViews[i]) != VK_SUCCESS) 
+			{
+				throw std::runtime_error("Failed to create Vulkan image views!");
+			}
+		}
 	}
 }

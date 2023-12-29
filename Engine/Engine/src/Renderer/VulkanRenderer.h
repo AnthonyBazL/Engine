@@ -67,6 +67,7 @@ namespace Engine
 		VkPresentModeKHR ChooseSwapPresentMode(const std::vector<VkPresentModeKHR>& availablePresentModes);
 		VkExtent2D ChooseSwapExtent(const VkSurfaceCapabilitiesKHR& capabilities);
 		void CreateSwapChain();
+		void CreateImageViews();
 
 		GLFWwindow* _pWnd = nullptr;
 		VkInstance _vkInstance;
@@ -76,6 +77,7 @@ namespace Engine
 		VkSurfaceKHR _surface;
 		VkSwapchainKHR _swapChain;
 		std::vector<VkImage> _swapChainImages;
+		std::vector<VkImageView> _swapChainImageViews;
 		VkFormat _swapChainImageFormat; // Frame format choosen (SRGB8, YUV, etc)
 		VkExtent2D _swapChainExtent; // Frame resolution choosen (for example 1280x720)
 		VkQueue _graphicsQueue; // Correspond to frames we'll be drawing on
