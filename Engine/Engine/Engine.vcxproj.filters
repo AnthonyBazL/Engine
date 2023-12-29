@@ -200,5 +200,12 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="includes\ImGui\imgui.ini" />
+    <None Include="src\Shader\CompileVulkanShader.bat">
+      <Filter>Fichiers sources</Filter>
+    </None>
+    <None Include="src\Shader\fragShader.spv" />
+    <None Include="src\Shader\vertShader.spv" />
+    <None Include="src\Shader\vulkanShader.frag" />
+    <None Include="src\Shader\vulkanShader.vert" />
   </ItemGroup>
 </Project>
