@@ -85,6 +85,7 @@ namespace Engine
 			return buffer;
 		}
 		VkShaderModule CreateShaderModule(const std::vector<char>& code);
+		void CreateRenderPass();
 
 		GLFWwindow* _pWnd = nullptr;
 		VkInstance _vkInstance;
@@ -99,6 +100,9 @@ namespace Engine
 		VkExtent2D _swapChainExtent; // Frame resolution choosen (for example 1280x720)
 		VkQueue _graphicsQueue; // Correspond to frames we'll be drawing on
 		VkQueue _presentQueue; // Correspond to frames displayed on screen
+		VkRenderPass _renderPass;
+		VkPipelineLayout _pipelineLayout;
+		VkPipeline _graphicsPipeline;
 		const uint32_t WIDTH = 800;
 		const uint32_t HEIGHT = 600;
 		const std::vector<const char*> _validationLayers = 
