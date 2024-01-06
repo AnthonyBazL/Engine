@@ -86,6 +86,7 @@ namespace Engine
 		}
 		VkShaderModule CreateShaderModule(const std::vector<char>& code);
 		void CreateRenderPass();
+		void CreateFramebuffers();
 
 		GLFWwindow* _pWnd = nullptr;
 		VkInstance _vkInstance;
@@ -96,6 +97,7 @@ namespace Engine
 		VkSwapchainKHR _swapChain;
 		std::vector<VkImage> _swapChainImages;
 		std::vector<VkImageView> _swapChainImageViews;
+		std::vector<VkFramebuffer> _swapChainFramebuffers;
 		VkFormat _swapChainImageFormat; // Frame format choosen (SRGB8, YUV, etc)
 		VkExtent2D _swapChainExtent; // Frame resolution choosen (for example 1280x720)
 		VkQueue _graphicsQueue; // Correspond to frames we'll be drawing on
