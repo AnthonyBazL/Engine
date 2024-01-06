@@ -87,6 +87,9 @@ namespace Engine
 		VkShaderModule CreateShaderModule(const std::vector<char>& code);
 		void CreateRenderPass();
 		void CreateFramebuffers();
+		void CreateCommandPool();
+		void CreateCommandBuffer();
+		void RecordCommandBuffer(VkCommandBuffer commandBuffer, uint32_t imageIndex);
 
 		GLFWwindow* _pWnd = nullptr;
 		VkInstance _vkInstance;
@@ -105,6 +108,8 @@ namespace Engine
 		VkRenderPass _renderPass;
 		VkPipelineLayout _pipelineLayout;
 		VkPipeline _graphicsPipeline;
+		VkCommandPool _commandPool;
+		VkCommandBuffer _commandBuffer;
 		const uint32_t WIDTH = 800;
 		const uint32_t HEIGHT = 600;
 		const std::vector<const char*> _validationLayers = 
