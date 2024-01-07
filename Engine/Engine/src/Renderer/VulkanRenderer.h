@@ -90,6 +90,7 @@ namespace Engine
 		void CreateCommandPool();
 		void CreateCommandBuffer();
 		void RecordCommandBuffer(VkCommandBuffer commandBuffer, uint32_t imageIndex);
+		void CreateSyncObjects();
 
 		GLFWwindow* _pWnd = nullptr;
 		VkInstance _vkInstance;
@@ -110,6 +111,9 @@ namespace Engine
 		VkPipeline _graphicsPipeline;
 		VkCommandPool _commandPool;
 		VkCommandBuffer _commandBuffer;
+		VkSemaphore _imageAvailableSemaphore; // This semaphore is here to check that a new image has been acquired from the swapchain on GPU side
+		VkSemaphore _renderFinishedSemaphore; // This semaphore is here to check that render has finished for current frame on GPU side
+		VkFence _drawNextFrameFence; // This fence is here to check that we wait for latest frame to be finished/rendered before rendering another one on CPU side
 		const uint32_t WIDTH = 800;
 		const uint32_t HEIGHT = 600;
 		const std::vector<const char*> _validationLayers = 

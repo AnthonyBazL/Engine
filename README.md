@@ -42,7 +42,14 @@ The goal is to acquire some knowledge on various rendering topics but also on di
   - [ ] Hello world with triangle
   
   ### Vulkan rendering
-  - [ ] Hello world with triangle
+  - [x] Hello world with triangle
+    - [ ] Render a custom mesh
+    - [ ] A simple object from an OBJ file
+    - [ ] Multiple object from an OBJ file
+  - [ ] Apply a simple unlit shader
+  - [ ] Apply a simple texture 2D shader
+  - [ ] Apply a simple lit shader
+  - [ ] Apply a 3D texture shader
 
   ### Metal rendering ?
   - [ ] Hello world with triangle

@@ -13,7 +13,6 @@ namespace Engine
 	void VulkanRenderer::StartRendering()
 	{		
 		int windowCreated = CreateWindow();
-		if (windowCreated != -1) Render();
 	}
 
 	void VulkanRenderer::StopRendering()
@@ -36,7 +35,11 @@ namespace Engine
 		while (!glfwWindowShouldClose(_pWnd)) 
 		{
 			glfwPollEvents();
+			Render();
 		}
+
+		// Rendring operations are asynchronous so we need logical device operations to be finished before cleaning resources
+		vkDeviceWaitIdle(_logicalDevice);
 
 		CleanUp();
 
@@ -45,11 +48,67 @@ namespace Engine
 
 	void VulkanRenderer::Render()
 	{
+		/////////////////
+		// Await previous frame to be draw before drawing next one
+		vkWaitForFences(_logicalDevice, 1, &_drawNextFrameFence, VK_TRUE, UINT64_MAX);
+		vkResetFences(_logicalDevice, 1, &_drawNextFrameFence);
 
+		/////////////////
+		// Acquire image from the swapchain
+		uint32_t imageIndex;
+		vkAcquireNextImageKHR(_logicalDevice, _swapChain, UINT64_MAX, _imageAvailableSemaphore, VK_NULL_HANDLE, &imageIndex);
+
+		/////////////////
+		// Record command buffer
+		vkResetCommandBuffer(_commandBuffer, 0);
+		RecordCommandBuffer(_commandBuffer, imageIndex);
+
+		/////////////////
+		// Submit command buffer
+		VkSubmitInfo submitInfo{};
+		submitInfo.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO;
+
+		VkSemaphore waitSemaphores[] = { _imageAvailableSemaphore };
+		// BE CAREFUL here, it corresponds to the stage on the graphic pipeline where it has to wait for the semaphore to be available,
+		// it means that vertex shader stage doesn't have to wait for this semaphore to be ready and can process as Color attachment stage happens after vertex shader stage on the graphic pipeline.
+		// TODO: In the case of mesh transformation, I guess VK_PIPELINE_STAGE_VERTEX_INPUT_BIT or VK_PIPELINE_STAGE_VERTEX_SHADER_BIT will be appropriate, to confirm.
+		VkPipelineStageFlags waitStages[] = { VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT };
+		submitInfo.waitSemaphoreCount = 1;
+		submitInfo.pWaitSemaphores = waitSemaphores;
+		submitInfo.pWaitDstStageMask = waitStages;
+		submitInfo.commandBufferCount = 1;
+		submitInfo.pCommandBuffers = &_commandBuffer;
+
+		VkSemaphore signalSemaphores[] = { _renderFinishedSemaphore };
+		submitInfo.signalSemaphoreCount = 1;
+		submitInfo.pSignalSemaphores = signalSemaphores;
+
+		if (vkQueueSubmit(_graphicsQueue, 1, &submitInfo, _drawNextFrameFence) != VK_SUCCESS) 
+		{
+			throw std::runtime_error("Failed to submit Vulkan draw command buffer!");
+		}
+
+		/////////////////
+		// Presentation
+		VkPresentInfoKHR presentInfo{};
+		presentInfo.sType = VK_STRUCTURE_TYPE_PRESENT_INFO_KHR;
+		presentInfo.waitSemaphoreCount = 1;
+		presentInfo.pWaitSemaphores = signalSemaphores;
+
+		VkSwapchainKHR swapChains[] = { _swapChain };
+		presentInfo.swapchainCount = 1;
+		presentInfo.pSwapchains = swapChains;
+		presentInfo.pImageIndices = &imageIndex;
+		presentInfo.pResults = nullptr; // Optional
+		vkQueuePresentKHR(_presentQueue, &presentInfo);
 	}
 	
 	void VulkanRenderer::CleanUp()
 	{
+		vkDestroySemaphore(_logicalDevice, _imageAvailableSemaphore, nullptr);
+		vkDestroySemaphore(_logicalDevice, _renderFinishedSemaphore, nullptr);
+		vkDestroyFence(_logicalDevice, _drawNextFrameFence, nullptr);
+
 		vkDestroyCommandPool(_logicalDevice, _commandPool, nullptr);
 
 		for (auto framebuffer : _swapChainFramebuffers) 
@@ -76,7 +135,6 @@ namespace Engine
 		vkDestroySurfaceKHR(_vkInstance, _surface, nullptr);
 		vkDestroyInstance(_vkInstance, nullptr);
 
-		vkDestroyInstance(_vkInstance, nullptr);
 		glfwDestroyWindow(_pWnd);
 		glfwTerminate();
 	}
@@ -95,6 +153,7 @@ namespace Engine
 		CreateFramebuffers();
 		CreateCommandPool();
 		CreateCommandBuffer();
+		CreateSyncObjects();
 	}
 
 	void VulkanRenderer::CreateVulkanInstance()
@@ -832,6 +891,13 @@ namespace Engine
 		// pDepthStencilAttachment : Attachment for depthand stencil data
 		// pPreserveAttachments : Attachments that are not used by this subpass, but for which the data must be preserved
 
+		// Subpass dependecies
+		VkSubpassDependency dependency{};
+		dependency.srcSubpass = VK_SUBPASS_EXTERNAL;
+		dependency.dstSubpass = 0;
+		dependency.srcStageMask = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT;
+		dependency.srcAccessMask = 0; 
+
 		// Render pass
 		VkRenderPassCreateInfo renderPassInfo{};
 		renderPassInfo.sType = VK_STRUCTURE_TYPE_RENDER_PASS_CREATE_INFO;
@@ -839,6 +905,9 @@ namespace Engine
 		renderPassInfo.pAttachments = &colorAttachment;
 		renderPassInfo.subpassCount = 1;
 		renderPassInfo.pSubpasses = &subpass;
+		renderPassInfo.dependencyCount = 1;
+		renderPassInfo.pDependencies = &dependency;
+
 
 		if (vkCreateRenderPass(_logicalDevice, &renderPassInfo, nullptr, &_renderPass) != VK_SUCCESS) 
 		{
@@ -954,6 +1023,23 @@ namespace Engine
 		if (vkEndCommandBuffer(commandBuffer) != VK_SUCCESS) 
 		{
 			throw std::runtime_error("Failed to record Vulkan command buffer!");
+		}
+	}
+
+	void VulkanRenderer::CreateSyncObjects()
+	{
+		VkSemaphoreCreateInfo semaphoreInfo{};
+		semaphoreInfo.sType = VK_STRUCTURE_TYPE_SEMAPHORE_CREATE_INFO;
+
+		VkFenceCreateInfo fenceInfo{};
+		fenceInfo.sType = VK_STRUCTURE_TYPE_FENCE_CREATE_INFO;
+		fenceInfo.flags = VK_FENCE_CREATE_SIGNALED_BIT;
+
+		if (vkCreateSemaphore(_logicalDevice, &semaphoreInfo, nullptr, &_imageAvailableSemaphore) != VK_SUCCESS ||
+			vkCreateSemaphore(_logicalDevice, &semaphoreInfo, nullptr, &_renderFinishedSemaphore) != VK_SUCCESS ||
+			vkCreateFence(_logicalDevice, &fenceInfo, nullptr, &_drawNextFrameFence) != VK_SUCCESS)
+		{
+			throw std::runtime_error("Failed to create Vulkan semaphores and fences!");
 		}
 	}
 }
