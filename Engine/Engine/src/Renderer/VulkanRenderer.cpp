@@ -25,8 +25,11 @@ namespace Engine
 		glfwInit();
 
 		glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
-		glfwWindowHint(GLFW_RESIZABLE, GLFW_FALSE);
+
 		_pWnd = glfwCreateWindow(WIDTH, HEIGHT, "Vulkan window", nullptr, nullptr);
+		glfwSetWindowUserPointer(_pWnd, this);
+		glfwSetFramebufferSizeCallback(_pWnd, FramebufferResizeCallback);
+
 		InitializeVulkan();
 		glm::mat4 matrix;
 		glm::vec4 vec;
@@ -46,16 +49,36 @@ namespace Engine
 		return 0;
 	}
 
+	void VulkanRenderer::FramebufferResizeCallback(GLFWwindow* window, int width, int height) 
+	{
+		auto app = reinterpret_cast<VulkanRenderer*>(glfwGetWindowUserPointer(window));
+		app->_framebufferResized = true;
+	}
+
 	void VulkanRenderer::Render()
 	{
 		/////////////////
 		// Await previous frame to be draw before drawing next one
 		vkWaitForFences(_logicalDevice, 1, &_inFlightFences[_currentFrame], VK_TRUE, UINT64_MAX);
+
+		uint32_t imageIndex;
+		VkResult result = vkAcquireNextImageKHR(_logicalDevice, _swapChain, UINT64_MAX, _imageAvailableSemaphores[_currentFrame], VK_NULL_HANDLE, &imageIndex);
+
+		if (result == VK_ERROR_OUT_OF_DATE_KHR)
+		{
+			RecreateSwapChain();
+			return;
+		}
+		else if (result != VK_SUCCESS && result != VK_SUBOPTIMAL_KHR)
+		{
+			throw std::runtime_error("Failed to acquire Vulkan swap chain image!");
+		}
+
+		// Only reset the fence if we are submitting work
 		vkResetFences(_logicalDevice, 1, &_inFlightFences[_currentFrame]);
 
 		/////////////////
 		// Acquire image from the swapchain
-		uint32_t imageIndex;
 		vkAcquireNextImageKHR(_logicalDevice, _swapChain, UINT64_MAX, _imageAvailableSemaphores[_currentFrame], VK_NULL_HANDLE, &imageIndex);
 
 		/////////////////
@@ -102,11 +125,28 @@ namespace Engine
 		presentInfo.pSwapchains = swapChains;
 		presentInfo.pImageIndices = &imageIndex;
 		presentInfo.pResults = nullptr; // Optional
-		vkQueuePresentKHR(_presentQueue, &presentInfo);
+		result = vkQueuePresentKHR(_presentQueue, &presentInfo);
+
+		if (result == VK_ERROR_OUT_OF_DATE_KHR || result == VK_SUBOPTIMAL_KHR || _framebufferResized) 
+		{
+			_framebufferResized = false;
+			RecreateSwapChain();
+		}
+		else if (result != VK_SUCCESS) 
+		{
+			throw std::runtime_error("failed to present swap chain image!");
+		}
 	}
 	
 	void VulkanRenderer::CleanUp()
 	{
+		CleanupSwapChain();
+
+		vkDestroyPipeline(_logicalDevice, _graphicsPipeline, nullptr);
+		vkDestroyPipelineLayout(_logicalDevice, _pipelineLayout, nullptr);
+
+		vkDestroyRenderPass(_logicalDevice, _renderPass, nullptr);
+
 		for (size_t i = 0; i < MAX_FRAMES_IN_FLIGHT; i++)
 		{
 			vkDestroySemaphore(_logicalDevice, _imageAvailableSemaphores[i], nullptr);
@@ -116,24 +156,10 @@ namespace Engine
 
 		vkDestroyCommandPool(_logicalDevice, _commandPool, nullptr);
 
-		for (auto framebuffer : _swapChainFramebuffers) 
-		{
-			vkDestroyFramebuffer(_logicalDevice, framebuffer, nullptr);
-		}
-
-		vkDestroyPipeline(_logicalDevice, _graphicsPipeline, nullptr);
-		vkDestroyPipelineLayout(_logicalDevice, _pipelineLayout, nullptr);
-		vkDestroyRenderPass(_logicalDevice, _renderPass, nullptr);
-
-		for (auto imageView : _swapChainImageViews) 
-		{
-			vkDestroyImageView(_logicalDevice, imageView, nullptr);
-		}
-
-		vkDestroySwapchainKHR(_logicalDevice, _swapChain, nullptr);
 		vkDestroyDevice(_logicalDevice, nullptr);
 
-		if (_enableValidationLayers) {
+		if (_enableValidationLayers) 
+		{
 			DestroyDebugUtilsMessengerEXT(_vkInstance, _debugMessenger, nullptr);
 		}
 
@@ -141,6 +167,7 @@ namespace Engine
 		vkDestroyInstance(_vkInstance, nullptr);
 
 		glfwDestroyWindow(_pWnd);
+
 		glfwTerminate();
 	}
 
@@ -1055,6 +1082,40 @@ namespace Engine
 				throw std::runtime_error("Failed to create Vulkan semaphores and fences!");
 			}
 		}
+	}
+
+	void VulkanRenderer::RecreateSwapChain()
+	{
+		int width = 0, height = 0;
+		glfwGetFramebufferSize(_pWnd, &width, &height);
+		while (width == 0 || height == 0) 
+		{
+			glfwGetFramebufferSize(_pWnd, &width, &height);
+			glfwWaitEvents();
+		}
+
+		vkDeviceWaitIdle(_logicalDevice);
+
+		CleanupSwapChain();
+
+		CreateSwapChain();
+		CreateImageViews();
+		CreateFramebuffers();
+	}
+
+	void VulkanRenderer::CleanupSwapChain()
+	{
+		for (auto framebuffer : _swapChainFramebuffers)
+		{
+			vkDestroyFramebuffer(_logicalDevice, framebuffer, nullptr);
+		}
+
+		for (auto imageView : _swapChainImageViews)
+		{
+			vkDestroyImageView(_logicalDevice, imageView, nullptr);
+		}
+
+		vkDestroySwapchainKHR(_logicalDevice, _swapChain, nullptr);
 	}
 
 }

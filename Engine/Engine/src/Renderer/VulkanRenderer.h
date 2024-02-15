@@ -39,6 +39,12 @@ namespace Engine
 		void StopRendering();
 
 	private:
+		static VKAPI_ATTR VkBool32 VKAPI_CALL DebugCallback(
+			VkDebugUtilsMessageSeverityFlagBitsEXT messageSeverity,
+			VkDebugUtilsMessageTypeFlagsEXT messageType,
+			const VkDebugUtilsMessengerCallbackDataEXT* pCallbackData,
+			void* pUserData);
+		static void FramebufferResizeCallback(GLFWwindow* window, int width, int height);
 		int CreateWindow();
 		void Render();		
 		void CleanUp();
@@ -47,11 +53,6 @@ namespace Engine
 		bool CheckValidationLayerSupport();
 		std::vector<const char*> GetRequiredExtensions();
 		void SetupDebugMessenger();
-		static VKAPI_ATTR VkBool32 VKAPI_CALL DebugCallback(
-			VkDebugUtilsMessageSeverityFlagBitsEXT messageSeverity,
-			VkDebugUtilsMessageTypeFlagsEXT messageType,
-			const VkDebugUtilsMessengerCallbackDataEXT* pCallbackData,
-			void* pUserData);
 		VkResult CreateDebugUtilsMessengerEXT(VkInstance instance, const VkDebugUtilsMessengerCreateInfoEXT* pCreateInfo,
 			const VkAllocationCallbacks* pAllocator, VkDebugUtilsMessengerEXT* pDebugMessenger);
 		void DestroyDebugUtilsMessengerEXT(VkInstance instance, VkDebugUtilsMessengerEXT debugMessenger, const VkAllocationCallbacks* pAllocator);
@@ -91,6 +92,8 @@ namespace Engine
 		void CreateCommandBuffers();
 		void RecordCommandBuffer(VkCommandBuffer commandBuffer, uint32_t imageIndex);
 		void CreateSyncObjects();
+		void RecreateSwapChain();
+		void CleanupSwapChain();
 
 		GLFWwindow* _pWnd = nullptr;
 		VkInstance _vkInstance;
@@ -118,6 +121,7 @@ namespace Engine
 		const uint32_t WIDTH = 800;
 		const uint32_t HEIGHT = 600;
 		const int MAX_FRAMES_IN_FLIGHT = 2; // Correspond to number of frames that can be processed concurently, avoid to wait for current framer to be rendered before processing the next one
+		bool _framebufferResized = false;
 		const std::vector<const char*> _validationLayers = 
 		{
 			"VK_LAYER_KHRONOS_validation"
