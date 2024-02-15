@@ -88,7 +88,7 @@ namespace Engine
 		void CreateRenderPass();
 		void CreateFramebuffers();
 		void CreateCommandPool();
-		void CreateCommandBuffer();
+		void CreateCommandBuffers();
 		void RecordCommandBuffer(VkCommandBuffer commandBuffer, uint32_t imageIndex);
 		void CreateSyncObjects();
 
@@ -110,12 +110,14 @@ namespace Engine
 		VkPipelineLayout _pipelineLayout;
 		VkPipeline _graphicsPipeline;
 		VkCommandPool _commandPool;
-		VkCommandBuffer _commandBuffer;
-		VkSemaphore _imageAvailableSemaphore; // This semaphore is here to check that a new image has been acquired from the swapchain on GPU side
-		VkSemaphore _renderFinishedSemaphore; // This semaphore is here to check that render has finished for current frame on GPU side
-		VkFence _drawNextFrameFence; // This fence is here to check that we wait for latest frame to be finished/rendered before rendering another one on CPU side
+		std::vector<VkCommandBuffer> _commandBuffers;
+		std::vector<VkSemaphore> _imageAvailableSemaphores; // This semaphore is here to check that a new image has been acquired from the swapchain on GPU side
+		std::vector<VkSemaphore> _renderFinishedSemaphores; // This semaphore is here to check that render has finished for current frame on GPU side
+		std::vector<VkFence> _inFlightFences; // This fence is here to check that we wait for latest frame to be finished/rendered before rendering another one on CPU side
+		uint32_t _currentFrame = 0;
 		const uint32_t WIDTH = 800;
 		const uint32_t HEIGHT = 600;
+		const int MAX_FRAMES_IN_FLIGHT = 2; // Correspond to number of frames that can be processed concurently, avoid to wait for current framer to be rendered before processing the next one
 		const std::vector<const char*> _validationLayers = 
 		{
 			"VK_LAYER_KHRONOS_validation"
