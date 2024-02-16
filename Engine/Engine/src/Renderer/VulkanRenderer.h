@@ -1,6 +1,7 @@
 #pragma once
 //#define VK_USE_PLATFORM_WIN32_KHR
 #define GLFW_INCLUDE_VULKAN // It will include vulkan.h that embed all Vulkan definitions
+#include <GLM/glm.hpp>
 #include "Renderer.h"
 //#define GLFW_EXPOSE_NATIVE_WIN32
 //#include <GLFW/glfw3native.h>
@@ -12,6 +13,52 @@
 
 namespace Engine
 {
+	struct Vertex
+	{
+		glm::vec2 pos;
+		glm::vec3 color;
+
+		static VkVertexInputBindingDescription GetBindingDescription() 
+		{
+			VkVertexInputBindingDescription bindingDescription{};
+			bindingDescription.binding = 0; // The binding parameter specifies the index of the binding in the array of bindings.
+			bindingDescription.stride = sizeof(Vertex); // The stride parameter specifies the number of bytes from one entry to the next
+			/*
+			The inputRate parameter can have one of the following values:
+				VK_VERTEX_INPUT_RATE_VERTEX: Move to the next data entry after each vertex
+				VK_VERTEX_INPUT_RATE_INSTANCE: Move to the next data entry after each instance
+			*/
+			bindingDescription.inputRate = VK_VERTEX_INPUT_RATE_VERTEX;
+			return bindingDescription;
+		}
+
+		static std::array<VkVertexInputAttributeDescription, 2> GetAttributeDescriptions() 
+		{
+			std::array<VkVertexInputAttributeDescription, 2> attributeDescriptions{};
+
+			// Position vertex attribute
+			attributeDescriptions[0].binding = 0; // The binding parameter tells Vulkan from which binding the per-vertex data comes
+			attributeDescriptions[0].location = 0; // The location parameter references the location directive of the input in the vertex shader
+			/*
+			The input in the vertex shader with location 0 is the position, which has two 32-bit float components
+				float: VK_FORMAT_R32_SFLOAT
+				vec2: VK_FORMAT_R32G32_SFLOAT
+				vec3: VK_FORMAT_R32G32B32_SFLOAT
+				vec4: VK_FORMAT_R32G32B32A32_SFLOAT
+			*/
+			attributeDescriptions[0].format = VK_FORMAT_R32G32_SFLOAT;
+			attributeDescriptions[0].offset = offsetof(Vertex, pos); // The offset parameter specifies the number of bytes since the start of the per-vertex data to read from
+
+			// Color vertex attribute
+			attributeDescriptions[1].binding = 0;
+			attributeDescriptions[1].location = 1;
+			attributeDescriptions[1].format = VK_FORMAT_R32G32B32_SFLOAT;
+			attributeDescriptions[1].offset = offsetof(Vertex, color);
+
+			return attributeDescriptions;
+		}
+	};
+
 	struct QueueFamilyIndices 
 	{
 		// We use "optional" as 0 can be a graphicFamily index so checking if value is assigned at least once guarantee that an index has been explicitly set
@@ -94,6 +141,8 @@ namespace Engine
 		void CreateSyncObjects();
 		void RecreateSwapChain();
 		void CleanupSwapChain();
+		void CreateVertexBuffer();
+		uint32_t FindMemoryType(uint32_t typeFilter, VkMemoryPropertyFlags properties);
 
 		GLFWwindow* _pWnd = nullptr;
 		VkInstance _vkInstance;
@@ -102,6 +151,8 @@ namespace Engine
 		VkDebugUtilsMessengerEXT _debugMessenger;
 		VkSurfaceKHR _surface;
 		VkSwapchainKHR _swapChain;
+		VkBuffer _vertexBuffer;
+		VkDeviceMemory _vertexBufferMemory;
 		std::vector<VkImage> _swapChainImages;
 		std::vector<VkImageView> _swapChainImageViews;
 		std::vector<VkFramebuffer> _swapChainFramebuffers;
@@ -122,6 +173,11 @@ namespace Engine
 		const uint32_t HEIGHT = 600;
 		const int MAX_FRAMES_IN_FLIGHT = 2; // Correspond to number of frames that can be processed concurently, avoid to wait for current framer to be rendered before processing the next one
 		bool _framebufferResized = false;
+		const std::vector<Vertex> _vertices = {
+			{{0.0f, -0.5f}, {1.0f, 0.0f, 0.0f}},
+			{{0.5f, 0.5f}, {0.0f, 1.0f, 0.0f}},
+			{{-0.5f, 0.5f}, {0.0f, 0.0f, 1.0f}}
+		};
 		const std::vector<const char*> _validationLayers = 
 		{
 			"VK_LAYER_KHRONOS_validation"
