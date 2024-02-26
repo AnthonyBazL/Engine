@@ -1,7 +1,10 @@
 #pragma once
 //#define VK_USE_PLATFORM_WIN32_KHR
 #define GLFW_INCLUDE_VULKAN // It will include vulkan.h that embed all Vulkan definitions
+#define GLM_FORCE_RADIANS
 #include <GLM/glm.hpp>
+#include <GLM/gtc/matrix_transform.hpp>
+#include <chrono>
 #include "Renderer.h"
 //#define GLFW_EXPOSE_NATIVE_WIN32
 //#include <GLFW/glfw3native.h>
@@ -77,6 +80,13 @@ namespace Engine
 		std::vector<VkPresentModeKHR> presentModes;
 	};
 
+	struct UniformBufferObject 
+	{
+		glm::mat4 model;
+		glm::mat4 view;
+		glm::mat4 proj;
+	};
+
 	class VulkanRenderer : public Renderer
 	{
 	public:
@@ -146,6 +156,9 @@ namespace Engine
 		void CreateBuffer(VkDeviceSize size, VkBufferUsageFlags usage, VkMemoryPropertyFlags properties, VkBuffer& buffer, VkDeviceMemory& bufferMemory);
 		void CopyBuffer(VkBuffer srcBuffer, VkBuffer dstBuffer, VkDeviceSize size);
 		void CreateIndexBuffer();
+		void CreateUniformBuffers();
+		void CreateDescriptorSetLayout();
+		void UpdateUniformBuffer(uint32_t currentImage);
 
 		GLFWwindow* _pWnd = nullptr;
 		VkInstance _vkInstance;
@@ -158,6 +171,9 @@ namespace Engine
 		VkDeviceMemory _vertexBufferMemory;
 		VkBuffer _indexBuffer;
 		VkDeviceMemory _indexBufferMemory;
+		std::vector<VkBuffer> _uniformBuffers;
+		std::vector<VkDeviceMemory> _uniformBuffersMemory;
+		std::vector<void*> _uniformBuffersMapped;
 		std::vector<VkImage> _swapChainImages;
 		std::vector<VkImageView> _swapChainImageViews;
 		std::vector<VkFramebuffer> _swapChainFramebuffers;
@@ -166,6 +182,7 @@ namespace Engine
 		VkQueue _graphicsQueue; // Correspond to frames we'll be drawing on
 		VkQueue _presentQueue; // Correspond to frames displayed on screen
 		VkRenderPass _renderPass;
+		VkDescriptorSetLayout _descriptorSetLayout;
 		VkPipelineLayout _pipelineLayout;
 		VkPipeline _graphicsPipeline;
 		VkCommandPool _commandPool;
