@@ -145,6 +145,7 @@ namespace Engine
 		uint32_t FindMemoryType(uint32_t typeFilter, VkMemoryPropertyFlags properties);
 		void CreateBuffer(VkDeviceSize size, VkBufferUsageFlags usage, VkMemoryPropertyFlags properties, VkBuffer& buffer, VkDeviceMemory& bufferMemory);
 		void CopyBuffer(VkBuffer srcBuffer, VkBuffer dstBuffer, VkDeviceSize size);
+		void CreateIndexBuffer();
 
 		GLFWwindow* _pWnd = nullptr;
 		VkInstance _vkInstance;
@@ -155,6 +156,8 @@ namespace Engine
 		VkSwapchainKHR _swapChain;
 		VkBuffer _vertexBuffer;
 		VkDeviceMemory _vertexBufferMemory;
+		VkBuffer _indexBuffer;
+		VkDeviceMemory _indexBufferMemory;
 		std::vector<VkImage> _swapChainImages;
 		std::vector<VkImageView> _swapChainImageViews;
 		std::vector<VkFramebuffer> _swapChainFramebuffers;
@@ -176,9 +179,13 @@ namespace Engine
 		const int MAX_FRAMES_IN_FLIGHT = 2; // Correspond to number of frames that can be processed concurently, avoid to wait for current framer to be rendered before processing the next one
 		bool _framebufferResized = false;
 		const std::vector<Vertex> _vertices = {
-			{{0.0f, -0.5f}, {1.0f, 0.0f, 0.0f}},
-			{{0.5f, 0.5f}, {0.0f, 1.0f, 0.0f}},
-			{{-0.5f, 0.5f}, {0.0f, 0.0f, 1.0f}}
+			{{-0.5f, -0.5f}, {1.0f, 0.0f, 0.0f}},
+			{{0.5f, -0.5f}, {0.0f, 1.0f, 0.0f}},
+			{{0.5f, 0.5f}, {0.0f, 0.0f, 1.0f}},
+			{{-0.5f, 0.5f}, {1.0f, 1.0f, 1.0f}}
+		};
+		const std::vector<uint32_t> _indices = { // Can be uint16_t here but I plan to load heavy models with high number of vertices for testing
+			0, 1, 2, 2, 3, 0
 		};
 		const std::vector<const char*> _validationLayers = 
 		{

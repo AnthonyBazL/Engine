@@ -142,6 +142,9 @@ namespace Engine
 	{
 		CleanupSwapChain();
 
+		vkDestroyBuffer(_logicalDevice, _indexBuffer, nullptr);
+		vkFreeMemory(_logicalDevice, _indexBufferMemory, nullptr);
+
 		vkDestroyBuffer(_logicalDevice, _vertexBuffer, nullptr);
 		vkFreeMemory(_logicalDevice, _vertexBufferMemory, nullptr);
 
@@ -188,6 +191,7 @@ namespace Engine
 		CreateFramebuffers();
 		CreateCommandPool();
 		CreateVertexBuffer();
+		CreateIndexBuffer();
 		CreateCommandBuffers();
 		CreateSyncObjects();
 	}
@@ -1058,8 +1062,10 @@ namespace Engine
 		VkDeviceSize offsets[] = { 0 };
 		vkCmdBindVertexBuffers(commandBuffer, 0, 1, vertexBuffers, offsets);
 
+		vkCmdBindIndexBuffer(commandBuffer, _indexBuffer, 0, VK_INDEX_TYPE_UINT32);
+
 		// Draw command
-		vkCmdDraw(commandBuffer, static_cast<uint32_t>(_vertices.size()), 1, 0, 0);
+		vkCmdDrawIndexed(commandBuffer, static_cast<uint32_t>(_indices.size()), 1, 0, 0, 0);
 
 		// End render pass
 		vkCmdEndRenderPass(commandBuffer);
@@ -1192,6 +1198,26 @@ namespace Engine
 		vkFreeCommandBuffers(_logicalDevice, _commandPool, 1, &commandBuffer);
 	}
 
+	void VulkanRenderer::CreateIndexBuffer()
+	{
+		VkDeviceSize bufferSize = sizeof(_indices[0]) * _indices.size();
+
+		VkBuffer stagingBuffer;
+		VkDeviceMemory stagingBufferMemory;
+		CreateBuffer(bufferSize, VK_BUFFER_USAGE_TRANSFER_SRC_BIT, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT, stagingBuffer, stagingBufferMemory);
+
+		void* data;
+		vkMapMemory(_logicalDevice, stagingBufferMemory, 0, bufferSize, 0, &data);
+		memcpy(data, _indices.data(), (size_t)bufferSize);
+		vkUnmapMemory(_logicalDevice, stagingBufferMemory);
+
+		CreateBuffer(bufferSize, VK_BUFFER_USAGE_TRANSFER_DST_BIT | VK_BUFFER_USAGE_INDEX_BUFFER_BIT, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT, _indexBuffer, _indexBufferMemory);
+
+		CopyBuffer(stagingBuffer, _indexBuffer, bufferSize);
+
+		vkDestroyBuffer(_logicalDevice, stagingBuffer, nullptr);
+		vkFreeMemory(_logicalDevice, stagingBufferMemory, nullptr);
+	}
 
 	void VulkanRenderer::CreateBuffer(VkDeviceSize size, VkBufferUsageFlags usage, VkMemoryPropertyFlags properties, VkBuffer& buffer, VkDeviceMemory& bufferMemory)
 	{
