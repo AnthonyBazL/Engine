@@ -18,7 +18,7 @@ namespace Engine
 		// Load texture
 		for (int i = 0; i < _textureFilesPath.size(); ++i)
 		{
-			_pMeshData->AddTexturesData(TextureLoader::LoadFile(_textureFilesPath[i]));
+			_pMeshData->AddTexturesData(TextureLoader::LoadFile(_textureFilesPath[i], 0));
 		}
 
 		// Specifiy shaders

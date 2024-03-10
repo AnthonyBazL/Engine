@@ -22,6 +22,6 @@ namespace Engine
 	void Core::Initialize()
 	{
 		if(_pRenderer)
-			_pRenderer->StartRendering();
+			((Renderer*)_pRenderer)->StartRendering();
 	}
 }

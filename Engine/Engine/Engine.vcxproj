@@ -98,6 +98,7 @@
     <ClCompile Include="includes\ImGui\imgui_impl_opengl3.cpp" />
     <ClCompile Include="includes\ImGui\imgui_tables.cpp" />
     <ClCompile Include="includes\ImGui\imgui_widgets.cpp" />
+    <ClCompile Include="src\Loader\stb_image.cpp" />
     <ClCompile Include="src\Meshes\MeshData.cpp" />
     <ClCompile Include="src\Components\Camera.cpp" />
     <ClCompile Include="src\Components\Component.cpp" />
@@ -111,7 +112,6 @@
     <ClCompile Include="src\Loader\ObjLoader.cpp" />
     <ClCompile Include="src\Interface.cpp" />
     <ClCompile Include="src\Loader\ShaderLoader.cpp" />
-    <ClCompile Include="src\Loader\stb_image.cpp" />
     <ClCompile Include="src\Loader\TextureLoader.cpp" />
     <ClCompile Include="src\Meshes\CustomMesh.cpp" />
     <ClCompile Include="src\Meshes\Mesh.cpp" />
@@ -131,6 +131,7 @@
     <ClInclude Include="includes\ImGui\imstb_rectpack.h" />
     <ClInclude Include="includes\ImGui\imstb_textedit.h" />
     <ClInclude Include="includes\ImGui\imstb_truetype.h" />
+    <ClInclude Include="src\Loader\stb_image.h" />
     <ClInclude Include="src\Meshes\MeshData.h" />
     <ClInclude Include="src\Components\Camera.h" />
     <ClInclude Include="src\Components\Component.h" />
@@ -144,7 +145,6 @@
     <ClInclude Include="src\Loader\ObjLoader.h" />
     <ClInclude Include="src\Interface.h" />
     <ClInclude Include="src\Loader\ShaderLoader.h" />
-    <ClInclude Include="src\Loader\stb_image.h" />
     <ClInclude Include="src\Loader\TextureLoader.h" />
     <ClInclude Include="src\Meshes\CustomMesh.h" />
     <ClInclude Include="src\Meshes\Mesh.h" />

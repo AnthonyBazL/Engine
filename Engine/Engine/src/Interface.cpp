@@ -23,6 +23,6 @@ namespace Engine
 	void* LoadTextureFile(std::string filePath)
 	{
 		TextureLoader* texLoader = new TextureLoader();
-		return texLoader->LoadFile(filePath);
+		return texLoader->LoadFile(filePath, 0);
 	}
 }

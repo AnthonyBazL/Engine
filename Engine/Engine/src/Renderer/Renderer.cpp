@@ -1,6 +1,6 @@
 #include "Renderer.h"
 
-namespace GraphicInterface
+namespace Engine
 {
 
 }

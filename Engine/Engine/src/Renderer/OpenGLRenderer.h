@@ -24,6 +24,7 @@ namespace Engine
 		void CleanUp();
 		bool PrepareMeshData(MeshData* pMeshData);
 		void DrawMesh(Mesh* pMesh);
+		void TestComputeShader();
 	};
 }
 #endif

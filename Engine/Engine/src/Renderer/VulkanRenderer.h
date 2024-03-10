@@ -1,11 +1,16 @@
 #pragma once
+#if USE_VULKAN
 //#define VK_USE_PLATFORM_WIN32_KHR
 #define GLFW_INCLUDE_VULKAN // It will include vulkan.h that embed all Vulkan definitions
 #define GLM_FORCE_RADIANS
+// Following define will force GLM to use a version of vec2 and mat4 that has the alignment requirements already specified
+// Check this explication about alignment requirement: https://docs.vulkan.org/tutorial/latest/05_Uniform_buffers/01_Descriptor_pool_and_sets.html#_alignment_requirements
+#define GLM_FORCE_DEFAULT_ALIGNED_GENTYPES
 #include <GLM/glm.hpp>
 #include <GLM/gtc/matrix_transform.hpp>
 #include <chrono>
 #include "Renderer.h"
+//#include "../Loader/TextureLoader.h" 
 //#define GLFW_EXPOSE_NATIVE_WIN32
 //#include <GLFW/glfw3native.h>
 #include <optional>
@@ -13,13 +18,13 @@
 #include <limits> // Necessary for std::numeric_limits
 #include <algorithm> // Necessary for std::clamp
 
-
 namespace Engine
 {
 	struct Vertex
 	{
 		glm::vec2 pos;
 		glm::vec3 color;
+		glm::vec2 texCoord;
 
 		static VkVertexInputBindingDescription GetBindingDescription() 
 		{
@@ -35,9 +40,9 @@ namespace Engine
 			return bindingDescription;
 		}
 
-		static std::array<VkVertexInputAttributeDescription, 2> GetAttributeDescriptions() 
+		static std::array<VkVertexInputAttributeDescription, 3> GetAttributeDescriptions() 
 		{
-			std::array<VkVertexInputAttributeDescription, 2> attributeDescriptions{};
+			std::array<VkVertexInputAttributeDescription, 3> attributeDescriptions{};
 
 			// Position vertex attribute
 			attributeDescriptions[0].binding = 0; // The binding parameter tells Vulkan from which binding the per-vertex data comes
@@ -57,6 +62,11 @@ namespace Engine
 			attributeDescriptions[1].location = 1;
 			attributeDescriptions[1].format = VK_FORMAT_R32G32B32_SFLOAT;
 			attributeDescriptions[1].offset = offsetof(Vertex, color);
+
+			attributeDescriptions[2].binding = 0;
+			attributeDescriptions[2].location = 2;
+			attributeDescriptions[2].format = VK_FORMAT_R32G32_SFLOAT;
+			attributeDescriptions[2].offset = offsetof(Vertex, texCoord);
 
 			return attributeDescriptions;
 		}
@@ -82,9 +92,10 @@ namespace Engine
 
 	struct UniformBufferObject 
 	{
-		glm::mat4 model;
-		glm::mat4 view;
-		glm::mat4 proj;
+		// alignas are important in order to always respect alignment requirement by Vulkan
+		alignas(16) glm::mat4 model;
+		alignas(16) glm::mat4 view;
+		alignas(16) glm::mat4 proj;
 	};
 
 	class VulkanRenderer : public Renderer
@@ -159,6 +170,17 @@ namespace Engine
 		void CreateUniformBuffers();
 		void CreateDescriptorSetLayout();
 		void UpdateUniformBuffer(uint32_t currentImage);
+		void CreateDescriptorPool();
+		void CreateDescriptorSets();
+		void CreateTextureImage();
+		void CreateImage(uint32_t width, uint32_t height, VkFormat format, VkImageTiling tiling, VkImageUsageFlags usage, VkMemoryPropertyFlags properties, VkImage& image, VkDeviceMemory& imageMemory);
+		VkCommandBuffer BeginSingleTimeCommands();
+		void EndSingleTimeCommands(VkCommandBuffer commandBuffer);
+		void TransitionImageLayout(VkImage image, VkFormat format, VkImageLayout oldLayout, VkImageLayout newLayout);
+		void CopyBufferToImage(VkBuffer buffer, VkImage image, uint32_t width, uint32_t height);
+		void CreateTextureImageView();
+		VkImageView CreateImageView(VkImage image, VkFormat format);
+		void CreateTextureSampler();
 
 		GLFWwindow* _pWnd = nullptr;
 		VkInstance _vkInstance;
@@ -186,6 +208,8 @@ namespace Engine
 		VkPipelineLayout _pipelineLayout;
 		VkPipeline _graphicsPipeline;
 		VkCommandPool _commandPool;
+		VkDescriptorPool _descriptorPool;
+		std::vector<VkDescriptorSet> _descriptorSets;
 		std::vector<VkCommandBuffer> _commandBuffers;
 		std::vector<VkSemaphore> _imageAvailableSemaphores; // This semaphore is here to check that a new image has been acquired from the swapchain on GPU side
 		std::vector<VkSemaphore> _renderFinishedSemaphores; // This semaphore is here to check that render has finished for current frame on GPU side
@@ -195,12 +219,18 @@ namespace Engine
 		const uint32_t HEIGHT = 600;
 		const int MAX_FRAMES_IN_FLIGHT = 2; // Correspond to number of frames that can be processed concurently, avoid to wait for current framer to be rendered before processing the next one
 		bool _framebufferResized = false;
+		VkImage _textureImage;
+		VkDeviceMemory _textureImageMemory;
+		VkImageView _textureImageView;
+		VkSampler _textureSampler;
+
 		const std::vector<Vertex> _vertices = {
-			{{-0.5f, -0.5f}, {1.0f, 0.0f, 0.0f}},
-			{{0.5f, -0.5f}, {0.0f, 1.0f, 0.0f}},
-			{{0.5f, 0.5f}, {0.0f, 0.0f, 1.0f}},
-			{{-0.5f, 0.5f}, {1.0f, 1.0f, 1.0f}}
+			{{-0.5f, -0.5f}, {1.0f, 0.0f, 0.0f}, {1.0f, 0.0f}},
+			{{0.5f, -0.5f}, {0.0f, 1.0f, 0.0f}, {0.0f, 0.0f}},
+			{{0.5f, 0.5f}, {0.0f, 0.0f, 1.0f}, {0.0f, 1.0f}},
+			{{-0.5f, 0.5f}, {1.0f, 1.0f, 1.0f}, {1.0f, 1.0f}}
 		};
+
 		const std::vector<uint32_t> _indices = { // Can be uint16_t here but I plan to load heavy models with high number of vertices for testing
 			0, 1, 2, 2, 3, 0
 		};
@@ -220,3 +250,4 @@ namespace Engine
 #endif
 	};
 }
+#endif

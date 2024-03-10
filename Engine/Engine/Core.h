@@ -1,6 +1,12 @@
 #pragma once
+
+#if USE_OPENGL
 #include "src/Renderer/OpenGLRenderer.h"
+#elif USE_VULKAN
 #include "src/Renderer/VulkanRenderer.h"
+#else
+#include "src/Renderer/OpenGLRenderer.h"
+#endif
 
 namespace Engine
 {
@@ -18,12 +24,11 @@ namespace Engine
 
 		_declspec(dllexport) void Initialize();
 
+
 	private:
+		void* _pRenderer = nullptr;
 		Core(Core const&);
 		void operator=(Core const&);
-
-		Renderer* _pRenderer;
-		Scene* _pScene;
 	};
 }
 

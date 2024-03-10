@@ -2,6 +2,7 @@
 #include <string>
 #include "stb_image.h"
 
+
 namespace Engine
 {
 
@@ -15,13 +16,13 @@ namespace Engine
 	{
 	public:
 		unsigned char* data = nullptr;
-		int width = 0, height = 0;
+		int width = 0, height = 0, channels = 0;
 	};
 
 	class TextureLoader
 	{
 	public:
-		static TextureData* LoadFile(std::string filePath);
+		static TextureData* LoadFile(std::string filePath, int componentsPerPixel);
 	};
 }
 

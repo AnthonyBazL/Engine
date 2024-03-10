@@ -29,7 +29,7 @@ namespace Engine
         }
 
         glfwWindowHint(GLFW_SAMPLES, 4); // 4x antialiasing
-        glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3); // We want OpenGL 3.3
+        glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3); // We want OpenGL 4.3
         glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
         glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE); // To make MacOS happy; should not be needed
         glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE); // We don't want the old OpenGL 
@@ -274,6 +274,62 @@ namespace Engine
         glEnable(GL_DEPTH_TEST);
 
         pMeshData->SetInitialized(true);
+
+        return true;
+    }
+
+    void OpenGLRenderer::TestComputeShader()
+    {
+        //const char* computeShaderCode =
+        //    "#version 330 core\n"\
+        //    "layout(local_size_x = 1, local_size_y = 1, local_size_z = 1) in;\n"\
+        //    "layout(std430, binding = 1 ) readonly buffer bufferData\n"\
+        //    "{\n"\
+        //    "    uint datas[];\n"\
+        //    "}; \n"\
+        //    "void main() {\n"\
+        //    "   ivec2 pixelIndex = ivec2(gl_GlobalInvocationID.xy);\n"\
+        //    "   datas[pixelIndex] = 0xFFFFFFFF;\n"\
+        //    "}";
+
+        //unsigned int compute;
+        //// compute shader
+        //compute = glCreateShader(GL_COMPUTE_SHADER);
+        //glShaderSource(compute, 1, &computeShaderCode, NULL);
+        //glCompileShader(compute);
+
+        //// shader Program
+        //GLuint ID = glCreateProgram();
+        //glAttachShader(ID, compute);
+        //glLinkProgram(ID);
+
+        //int width = 640;
+        //int height = 480;
+        //int pixelCount = width * height;
+
+        //uint32_t* data = new uint32_t[pixelCount];
+        //for (size_t i = 0; i < pixelCount; i++)
+        //{
+        //    data[i] = 0xFF0000FF;
+        //}
+
+        //GLuint SSBO;
+        //glGenBuffers(1, &SSBO);
+        //glBindBuffer(GL_SHADER_STORAGE_BUFFER, SSBO);
+        //glBufferData(GL_SHADER_STORAGE_BUFFER, pixelCount * sizeof(uint32_t), data, GL_DYNAMIC_DRAW);
+
+        //// Update loop
+        //int ssbo_binding = 1;
+        //int block_index = glGetProgramResourceIndex(s_Data.compute_shader.ID, GL_SHADER_STORAGE_BLOCK, "bufferData");
+        //glShaderStorageBlockBinding(s_Data.compute_shader.ID, block_index, ssbo_binding);
+        //glBindBufferBase(GL_SHADER_STORAGE_BUFFER, ssbo_binding, SSBO);
+
+
+        //glUseProgram(ID);
+        //glDispatchCompute(1, 1, 1);
+
+        //// make sure writing to image has finished before read
+        //glMemoryBarrier(GL_SHADER_IMAGE_ACCESS_BARRIER_BIT);
     }
 }
 #endif
