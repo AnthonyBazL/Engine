@@ -8,6 +8,8 @@
 #define GLM_FORCE_DEFAULT_ALIGNED_GENTYPES
 #include <GLM/glm.hpp>
 #include <GLM/gtc/matrix_transform.hpp>
+#define GLM_ENABLE_EXPERIMENTAL
+#include <glm/gtx/hash.hpp>
 #include <chrono>
 #include "Renderer.h"
 //#include "../Loader/TextureLoader.h" 
@@ -17,63 +19,79 @@
 #include <set>
 #include <limits> // Necessary for std::numeric_limits
 #include <algorithm> // Necessary for std::clamp
+#include <unordered_map> // Used to prepare unique vertices from OBJ
+#include "../Loader/tiny_obj_loader.h"
+
+
+struct Vertex
+{
+	glm::vec3 pos;
+	glm::vec3 color;
+	glm::vec2 texCoord;
+
+	bool operator==(const Vertex& other) const
+	{
+		return pos == other.pos && color == other.color && texCoord == other.texCoord;
+	}
+
+	static VkVertexInputBindingDescription GetBindingDescription()
+	{
+		VkVertexInputBindingDescription bindingDescription{};
+		bindingDescription.binding = 0; // The binding parameter specifies the index of the binding in the array of bindings.
+		bindingDescription.stride = sizeof(Vertex); // The stride parameter specifies the number of bytes from one entry to the next
+		/*
+		The inputRate parameter can have one of the following values:
+			VK_VERTEX_INPUT_RATE_VERTEX: Move to the next data entry after each vertex
+			VK_VERTEX_INPUT_RATE_INSTANCE: Move to the next data entry after each instance
+		*/
+		bindingDescription.inputRate = VK_VERTEX_INPUT_RATE_VERTEX;
+		return bindingDescription;
+	}
+
+	static std::array<VkVertexInputAttributeDescription, 3> GetAttributeDescriptions()
+	{
+		std::array<VkVertexInputAttributeDescription, 3> attributeDescriptions{};
+
+		// Position vertex attribute
+		attributeDescriptions[0].binding = 0; // The binding parameter tells Vulkan from which binding the per-vertex data comes
+		attributeDescriptions[0].location = 0; // The location parameter references the location directive of the input in the vertex shader
+		/*
+		The input in the vertex shader with location 0 is the position, which has two 32-bit float components
+			float: VK_FORMAT_R32_SFLOAT
+			vec2: VK_FORMAT_R32G32_SFLOAT
+			vec3: VK_FORMAT_R32G32B32_SFLOAT
+			vec4: VK_FORMAT_R32G32B32A32_SFLOAT
+		*/
+		attributeDescriptions[0].binding = 0;
+		attributeDescriptions[0].location = 0;
+		attributeDescriptions[0].format = VK_FORMAT_R32G32B32_SFLOAT;
+		attributeDescriptions[0].offset = offsetof(Vertex, pos); // The offset parameter specifies the number of bytes since the start of the per-vertex data to read from
+
+		// Color vertex attribute
+		attributeDescriptions[1].binding = 0;
+		attributeDescriptions[1].location = 1;
+		attributeDescriptions[1].format = VK_FORMAT_R32G32B32_SFLOAT;
+		attributeDescriptions[1].offset = offsetof(Vertex, color);
+
+		attributeDescriptions[2].binding = 0;
+		attributeDescriptions[2].location = 2;
+		attributeDescriptions[2].format = VK_FORMAT_R32G32_SFLOAT;
+		attributeDescriptions[2].offset = offsetof(Vertex, texCoord);
+
+		return attributeDescriptions;
+	}
+};
+
+template<> struct std::hash<Vertex>
+{
+	size_t operator()(Vertex const& vertex) const
+	{
+		return ((std::hash<glm::vec3>()(vertex.pos) ^ (std::hash<glm::vec3>()(vertex.color) << 1)) >> 1) ^ (std::hash<glm::vec2>()(vertex.texCoord) << 1);
+	}
+};
 
 namespace Engine
 {
-	struct Vertex
-	{
-		glm::vec3 pos;
-		glm::vec3 color;
-		glm::vec2 texCoord;
-
-		static VkVertexInputBindingDescription GetBindingDescription() 
-		{
-			VkVertexInputBindingDescription bindingDescription{};
-			bindingDescription.binding = 0; // The binding parameter specifies the index of the binding in the array of bindings.
-			bindingDescription.stride = sizeof(Vertex); // The stride parameter specifies the number of bytes from one entry to the next
-			/*
-			The inputRate parameter can have one of the following values:
-				VK_VERTEX_INPUT_RATE_VERTEX: Move to the next data entry after each vertex
-				VK_VERTEX_INPUT_RATE_INSTANCE: Move to the next data entry after each instance
-			*/
-			bindingDescription.inputRate = VK_VERTEX_INPUT_RATE_VERTEX;
-			return bindingDescription;
-		}
-
-		static std::array<VkVertexInputAttributeDescription, 3> GetAttributeDescriptions() 
-		{
-			std::array<VkVertexInputAttributeDescription, 3> attributeDescriptions{};
-
-			// Position vertex attribute
-			attributeDescriptions[0].binding = 0; // The binding parameter tells Vulkan from which binding the per-vertex data comes
-			attributeDescriptions[0].location = 0; // The location parameter references the location directive of the input in the vertex shader
-			/*
-			The input in the vertex shader with location 0 is the position, which has two 32-bit float components
-				float: VK_FORMAT_R32_SFLOAT
-				vec2: VK_FORMAT_R32G32_SFLOAT
-				vec3: VK_FORMAT_R32G32B32_SFLOAT
-				vec4: VK_FORMAT_R32G32B32A32_SFLOAT
-			*/
-			attributeDescriptions[0].binding = 0;
-			attributeDescriptions[0].location = 0;
-			attributeDescriptions[0].format = VK_FORMAT_R32G32B32_SFLOAT;
-			attributeDescriptions[0].offset = offsetof(Vertex, pos); // The offset parameter specifies the number of bytes since the start of the per-vertex data to read from
-
-			// Color vertex attribute
-			attributeDescriptions[1].binding = 0;
-			attributeDescriptions[1].location = 1;
-			attributeDescriptions[1].format = VK_FORMAT_R32G32B32_SFLOAT;
-			attributeDescriptions[1].offset = offsetof(Vertex, color);
-
-			attributeDescriptions[2].binding = 0;
-			attributeDescriptions[2].location = 2;
-			attributeDescriptions[2].format = VK_FORMAT_R32G32_SFLOAT;
-			attributeDescriptions[2].offset = offsetof(Vertex, texCoord);
-
-			return attributeDescriptions;
-		}
-	};
-
 	struct QueueFamilyIndices 
 	{
 		// We use "optional" as 0 can be a graphicFamily index so checking if value is assigned at least once guarantee that an index has been explicitly set
@@ -187,6 +205,7 @@ namespace Engine
 		VkFormat FindSupportedFormat(const std::vector<VkFormat>& candidates, VkImageTiling tiling, VkFormatFeatureFlags features);
 		VkFormat FindDepthFormat();
 		bool HasStencilComponent(VkFormat format);
+		void LoadObj(); // TODO: This function has to be moved to the ObjLoader class
 
 		GLFWwindow* _pWnd = nullptr;
 		VkInstance _vkInstance;
@@ -232,23 +251,13 @@ namespace Engine
 		VkImage _depthImage;
 		VkDeviceMemory _depthImageMemory;
 		VkImageView _depthImageView;
+		std::vector<Vertex> _vertices;
+		std::vector<uint32_t> _indices; // Can be uint16_t here but I plan to load heavy models with high number of vertices for testing
+		std::unordered_map<Vertex, uint32_t> _uniqueVertices{};
 
-		const std::vector<Vertex> _vertices = {
-			{{-0.5f, -0.5f, 0.0f}, {1.0f, 0.0f, 0.0f}, {0.0f, 0.0f}},
-			{{0.5f, -0.5f, 0.0f}, {0.0f, 1.0f, 0.0f}, {1.0f, 0.0f}},
-			{{0.5f, 0.5f, 0.0f}, {0.0f, 0.0f, 1.0f}, {1.0f, 1.0f}},
-			{{-0.5f, 0.5f, 0.0f}, {1.0f, 1.0f, 1.0f}, {0.0f, 1.0f}},
+		const std::string MODEL_PATH = "C:\\Users\\abaze\\Documents\\C++ Projects\\Engine\\Engine\\GraphicInterface\\resources\\obj\\viking_room.obj";
+		const std::string TEXTURE_PATH = "C:\\Users\\abaze\\Documents\\C++ Projects\\Engine\\Engine\\GraphicInterface\\resources\\textures\\viking_room.png";
 
-			{{-0.5f, -0.5f, -0.5f}, {1.0f, 0.0f, 0.0f}, {0.0f, 0.0f}},
-			{{0.5f, -0.5f, -0.5f}, {0.0f, 1.0f, 0.0f}, {1.0f, 0.0f}},
-			{{0.5f, 0.5f, -0.5f}, {0.0f, 0.0f, 1.0f}, {1.0f, 1.0f}},
-			{{-0.5f, 0.5f, -0.5f}, {1.0f, 1.0f, 1.0f}, {0.0f, 1.0f}}
-		};
-
-		const std::vector<uint32_t> _indices = { // Can be uint16_t here but I plan to load heavy models with high number of vertices for testing
-			0, 1, 2, 2, 3, 0,
-			4, 5, 6, 6, 7, 4
-		};
 		const std::vector<const char*> _validationLayers = 
 		{
 			"VK_LAYER_KHRONOS_validation"
@@ -265,4 +274,5 @@ namespace Engine
 #endif
 	};
 }
+
 #endif

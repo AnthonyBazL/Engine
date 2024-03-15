@@ -215,6 +215,7 @@ namespace Engine
 		CreateTextureImage();
 		CreateTextureImageView();
 		CreateTextureSampler();
+		LoadObj();
 		CreateVertexBuffer();
 		CreateIndexBuffer();
 		CreateUniformBuffers();
@@ -1550,7 +1551,7 @@ namespace Engine
 	void VulkanRenderer::CreateTextureImage()
 	{
 		int texWidth = 0, texHeight = 0, texChannels = 0;
-		TextureData* texData = TextureLoader::LoadFile("C:\\Users\\abaze\\Documents\\C++ Projects\\Engine\\Engine\\GraphicInterface\\resources\\textures\\statue.jpg", STBI_rgb_alpha);
+		TextureData* texData = TextureLoader::LoadFile(TEXTURE_PATH, STBI_rgb_alpha);
 		texWidth = texData->width;
 		texHeight = texData->height;
 		texChannels = texData->channels;
@@ -1632,6 +1633,48 @@ namespace Engine
 	bool VulkanRenderer::HasStencilComponent(VkFormat format) 
 	{
 		return format == VK_FORMAT_D32_SFLOAT_S8_UINT || format == VK_FORMAT_D24_UNORM_S8_UINT;
+	}
+
+	void VulkanRenderer::LoadObj()
+	{
+		tinyobj::attrib_t attrib;
+		std::vector<tinyobj::shape_t> shapes;
+		std::vector<tinyobj::material_t> materials;
+		std::string warn, err;
+
+		if (!tinyobj::LoadObj(&attrib, &shapes, &materials, &warn, &err, MODEL_PATH.c_str())) 
+		{
+			throw std::runtime_error(warn + err);
+		}
+
+		for (const auto& shape : shapes) 
+		{
+			for (const tinyobj::index_t& index : shape.mesh.indices) 
+			{
+				Vertex vertex{};
+
+				vertex.pos = {
+					attrib.vertices[3 * index.vertex_index + 0],
+					attrib.vertices[3 * index.vertex_index + 1],
+					attrib.vertices[3 * index.vertex_index + 2]
+				};
+
+				vertex.texCoord = {
+					attrib.texcoords[2 * index.texcoord_index + 0],
+					1.0f - attrib.texcoords[2 * index.texcoord_index + 1]
+				};
+
+				vertex.color = { 1.0f, 1.0f, 1.0f };
+
+				if (_uniqueVertices.count(vertex) == 0) 
+				{
+					_uniqueVertices[vertex] = static_cast<uint32_t>(_vertices.size());
+					_vertices.push_back(vertex);
+				}
+
+				_indices.push_back(_uniqueVertices[vertex]);
+			}
+		}
 	}
 
 	VkFormat VulkanRenderer::FindDepthFormat() 
