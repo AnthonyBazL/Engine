@@ -43,11 +43,11 @@ The goal is to acquire some knowledge on various rendering topics but also on di
   
   ### Vulkan rendering
   - [x] Hello world with triangle
-    - [ ] Render a custom mesh
-    - [ ] A simple object from an OBJ file
-    - [ ] Multiple object from an OBJ file
-  - [ ] Apply a simple unlit shader
-  - [ ] Apply a simple texture 2D shader
+    - [x] Render a custom mesh
+    - [x] A simple object from an OBJ file
+    - [x] Multiple object from an OBJ file
+  - [x] Apply a simple unlit shader
+  - [x] Apply a simple texture 2D shader
   - [ ] Apply a simple lit shader
   - [ ] Apply a 3D texture shader
 
