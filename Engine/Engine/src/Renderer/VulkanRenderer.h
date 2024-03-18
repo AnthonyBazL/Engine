@@ -193,19 +193,20 @@ namespace Engine
 		void CreateDescriptorPool();
 		void CreateDescriptorSets();
 		void CreateTextureImage();
-		void CreateImage(uint32_t width, uint32_t height, VkFormat format, VkImageTiling tiling, VkImageUsageFlags usage, VkMemoryPropertyFlags properties, VkImage& image, VkDeviceMemory& imageMemory);
+		void CreateImage(uint32_t width, uint32_t height, uint32_t mipLevels, VkFormat format, VkImageTiling tiling, VkImageUsageFlags usage, VkMemoryPropertyFlags properties, VkImage& image, VkDeviceMemory& imageMemory);
 		VkCommandBuffer BeginSingleTimeCommands();
 		void EndSingleTimeCommands(VkCommandBuffer commandBuffer);
-		void TransitionImageLayout(VkImage image, VkFormat format, VkImageLayout oldLayout, VkImageLayout newLayout);
+		void TransitionImageLayout(VkImage image, VkFormat format, VkImageLayout oldLayout, VkImageLayout newLayout, uint32_t mipLevels);
 		void CopyBufferToImage(VkBuffer buffer, VkImage image, uint32_t width, uint32_t height);
 		void CreateTextureImageView();
-		VkImageView CreateImageView(VkImage image, VkFormat format, VkImageAspectFlags aspectFlags);
+		VkImageView CreateImageView(VkImage image, VkFormat format, VkImageAspectFlags aspectFlags, uint32_t mipLevels);
 		void CreateTextureSampler();
 		void CreateDepthResources();
 		VkFormat FindSupportedFormat(const std::vector<VkFormat>& candidates, VkImageTiling tiling, VkFormatFeatureFlags features);
 		VkFormat FindDepthFormat();
 		bool HasStencilComponent(VkFormat format);
 		void LoadObj(); // TODO: This function has to be moved to the ObjLoader class
+		void GenerateMipmaps(VkImage image, VkFormat imageFormat, int32_t texWidth, int32_t texHeight, uint32_t mipLevels);
 
 		GLFWwindow* _pWnd = nullptr;
 		VkInstance _vkInstance;
@@ -245,6 +246,7 @@ namespace Engine
 		const int MAX_FRAMES_IN_FLIGHT = 2; // Correspond to number of frames that can be processed concurently, avoid to wait for current framer to be rendered before processing the next one
 		bool _framebufferResized = false;
 		VkImage _textureImage;
+		uint32_t _mipLevels;
 		VkDeviceMemory _textureImageMemory;
 		VkImageView _textureImageView;
 		VkSampler _textureSampler;
