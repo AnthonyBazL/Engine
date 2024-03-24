@@ -11,8 +11,13 @@ namespace Engine
 		//io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;     // Enable Keyboard Controls
 		//io.ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad;      // Enable Gamepad Controls
 		ImGui::StyleColorsDark();
+
+#if USE_OPENGL
 		ImGui_ImplGlfw_InitForOpenGL(pWindow, true);
 		ImGui_ImplOpenGL3_Init("#version 330");
+#elif USE_VULKAN
+		// ImGui Initialized in VulkanRenderer class directly for now
+#endif
 
 		_windowsMap[ImGuiWindowType::PROFILER] = new ProfilerGUI();
 		_windowsMap[ImGuiWindowType::SCENE_TRANSFORM] = new SceneTransformGUI(pScene);
@@ -25,7 +30,11 @@ namespace Engine
 
 	ImGuiManager::~ImGuiManager()
 	{
+#if USE_OPENGL
 		ImGui_ImplOpenGL3_Shutdown();
+#elif USE_VULKAN
+		ImGui_ImplVulkan_Shutdown();
+#endif
 		ImGui_ImplGlfw_Shutdown();
 		ImGui::DestroyContext();
 
@@ -44,7 +53,11 @@ namespace Engine
 
 	void ImGuiManager::Render()
 	{
+#if USE_OPENGL
 		ImGui_ImplOpenGL3_NewFrame();
+#elif USE_VULKAN
+		ImGui_ImplVulkan_NewFrame();
+#endif
 		ImGui_ImplGlfw_NewFrame();
 		ImGui::NewFrame();
 
@@ -54,6 +67,10 @@ namespace Engine
 		}
 
 		ImGui::Render();
+#if USE_OPENGL
 		ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+#elif USE_VULKAN
+		ImGui_ImplVulkan_RenderDrawData(ImGui::GetDrawData(), nullptr); // VK command buffer to pass here
+#endif
 	}
 }

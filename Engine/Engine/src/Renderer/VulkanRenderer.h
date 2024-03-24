@@ -207,8 +207,8 @@ namespace Engine
 		bool HasStencilComponent(VkFormat format);
 		void LoadObj(); // TODO: This function has to be moved to the ObjLoader class
 		void GenerateMipmaps(VkImage image, VkFormat imageFormat, int32_t texWidth, int32_t texHeight, uint32_t mipLevels);
+		void InitImGui();
 
-		GLFWwindow* _pWnd = nullptr;
 		VkInstance _vkInstance;
 		VkDevice _logicalDevice;
 		VkPhysicalDevice _physicalDevice = VK_NULL_HANDLE;

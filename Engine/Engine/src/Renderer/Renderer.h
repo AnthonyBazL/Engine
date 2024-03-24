@@ -8,7 +8,7 @@
 #include <GLFW/glfw3.h>
 #endif // !GL_H
 
-
+#include "../GUI/ImGuiManager.h"
 #include "../Components/Scene.h"
 
 namespace Engine
@@ -31,6 +31,8 @@ namespace Engine
 		Scene* _pScene;
 		RenderState _renderState = RenderState::UNINITIALIZED; // TODO: To manage
 		void* _pRenderFunc = nullptr; // TODO: Manage rendering asynchronously in a seperate thread
+		ImGuiManager* _pGUIManager = nullptr;
+		GLFWwindow* _pWnd = nullptr;
 
 		virtual int CreateWindow() = 0;
 		virtual void CleanUp() = 0;

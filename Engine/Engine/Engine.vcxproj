@@ -96,6 +96,7 @@
     <ClCompile Include="includes\ImGui\imgui_draw.cpp" />
     <ClCompile Include="includes\ImGui\imgui_impl_glfw.cpp" />
     <ClCompile Include="includes\ImGui\imgui_impl_opengl3.cpp" />
+    <ClCompile Include="includes\ImGui\imgui_impl_vulkan.cpp" />
     <ClCompile Include="includes\ImGui\imgui_tables.cpp" />
     <ClCompile Include="includes\ImGui\imgui_widgets.cpp" />
     <ClCompile Include="src\Loader\stb_image.cpp" />
@@ -128,6 +129,7 @@
     <ClInclude Include="includes\ImGui\imgui_impl_glfw.h" />
     <ClInclude Include="includes\ImGui\imgui_impl_opengl3.h" />
     <ClInclude Include="includes\ImGui\imgui_impl_opengl3_loader.h" />
+    <ClInclude Include="includes\ImGui\imgui_impl_vulkan.h" />
     <ClInclude Include="includes\ImGui\imgui_internal.h" />
     <ClInclude Include="includes\ImGui\imstb_rectpack.h" />
     <ClInclude Include="includes\ImGui\imstb_textedit.h" />

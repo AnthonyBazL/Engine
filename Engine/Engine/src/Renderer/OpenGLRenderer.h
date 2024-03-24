@@ -1,7 +1,6 @@
 #pragma once
 #if USE_OPENGL
 #include "Renderer.h"
-#include "../GUI/ImGuiManager.h"
 #include <vector>
 
 namespace Engine
@@ -14,8 +13,6 @@ namespace Engine
 		void StopRendering() override;
 
 	private:
-		ImGuiManager* _pGUIManager = nullptr;
-		GLFWwindow* _pWnd = nullptr;
 		double _mousePosX = 0.0;
 		double _mousePosY = 0.0;
 
