@@ -72,4 +72,6 @@ The goal is to acquire some knowledge on various rendering topics but also on di
   - [ ] Mesh collision
   - [ ] Fog/fluid simulation
   - [ ] ...
-  
+
+## WIP current general class architecture
+![](https://github.com/AnthonyBazL/Engine/blob/master/resources/graphClass.PNG)
